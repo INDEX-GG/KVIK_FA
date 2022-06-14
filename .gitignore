@@ -1,0 +1,3 @@
+venv
+.idea
+app/core/config.py
