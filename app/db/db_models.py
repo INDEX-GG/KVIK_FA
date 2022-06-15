@@ -48,7 +48,7 @@ class UserPhoto(Base):
 class Role(Base):
     __tablename__ = "roles"
     __table_args__ = {"schema": "public"}
-    id = Column("id", Integer, primary_key=True, index=True, autoincrement=True, nullable=False)
+    id = Column("id", Integer, primary_key=True, index=True, nullable=False)
     title = Column("title", String)
 
     owner = relationship("User", back_populates="role")
@@ -78,3 +78,11 @@ class PostPhoto(Base):
 
     owner = relationship("User", back_populates="photos")
 
+
+class PhoneCalls(Base):
+    __tablename__ = "phone_calls"
+    __table_args__ = {"schema": "public"}
+    id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
+    phone = Column("phone", Integer)
+    phoneValidate = Column("phone_validate", BOOLEAN, nullable=False)
+    createdAt = Column("created_at", TIMESTAMP, nullable=False)
