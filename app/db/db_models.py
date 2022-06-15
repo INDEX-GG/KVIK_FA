@@ -14,7 +14,7 @@ class User(Base):
     appleId = Column("apple_id", String, unique=True)
     email = Column("email", String, unique=True)
     emailVerified = Column("email_verified", BOOLEAN, nullable=False)
-    phone = Column("phone", Integer, unique=True)
+    phone = Column("phone", String, unique=True)
     phoneVerified = Column("phone_verified", BOOLEAN, nullable=False)
     phoneHidden = Column("phone_hidden", BOOLEAN, nullable=False)
     password = Column("password", String)
@@ -34,6 +34,7 @@ class User(Base):
 
     photo = relationship("UserPhoto", back_populates="owner")
     role = relationship("Role", back_populates="owner")
+    posts = relationship("Post", back_populates="user")
 
 
 class UserPhoto(Base):
@@ -65,8 +66,8 @@ class Post(Base):
     price = Column("price", Float)
     trade = Column("trade", BOOLEAN, nullable=False)
 
-    photos = relationship("PostsPhoto", back_populates="owner")
-    user = relationship("User", back_populates="owner")
+    photos = relationship("PostPhoto", back_populates="owner")
+    user = relationship("User", back_populates="posts")
 
 
 class PostPhoto(Base):
@@ -76,13 +77,14 @@ class PostPhoto(Base):
     postId = Column("post_id", Integer, ForeignKey("public.posts.id"), nullable=False)
     url = Column("url", String)
 
-    owner = relationship("User", back_populates="photos")
+    owner = relationship("Post", back_populates="photos")
 
 
 class PhoneCalls(Base):
     __tablename__ = "phone_calls"
     __table_args__ = {"schema": "public"}
     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
-    phone = Column("phone", Integer)
+    phone = Column("phone", String)
+    ValidateCode = Column("validate_code", Integer)
     phoneValidate = Column("phone_validate", BOOLEAN, nullable=False)
     createdAt = Column("created_at", TIMESTAMP, nullable=False)
