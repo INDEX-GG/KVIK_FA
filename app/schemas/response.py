@@ -22,3 +22,8 @@ class ResponseCheckVerifCode(BaseModel):
 
 class ResponseCheckPhoneRegistration(BaseModel):
     phoneRegistration: bool
+
+
+class ResponseLogin(BaseModel):
+    refreshToken: str
+    accessToken: str

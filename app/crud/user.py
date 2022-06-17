@@ -28,3 +28,14 @@ def create_user(db: Session, user: user_schema.UserCreate):
     db.add(db_user)
     db.commit()
     return True
+
+
+def authenticate_user(db: Session, username: str, password: str):
+    db_user = db.query(User).filter(User.phone == username).first()
+    if not db_user:
+        return False
+    if not security.verify_password(password, db_user.password):
+        return False
+    db_user.lastLoginAt = datetime.datetime.utcnow()
+    db.commit()
+    return db_user
