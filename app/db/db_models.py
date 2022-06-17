@@ -85,6 +85,14 @@ class PhoneCalls(Base):
     __table_args__ = {"schema": "public"}
     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
     phone = Column("phone", String)
-    ValidateCode = Column("validate_code", Integer)
+    validateCode = Column("validate_code", String)
     phoneValidate = Column("phone_validate", BOOLEAN, nullable=False)
+    createdAt = Column("created_at", TIMESTAMP, nullable=False)
+
+
+class PhoneVerifyUnsuccessfulTry(Base):
+    __tablename__ = "phone_verify_unsuccessful_try"
+    __table_args__ = {"schema": "public"}
+    id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
+    phone = Column("phone", String)
     createdAt = Column("created_at", TIMESTAMP, nullable=False)

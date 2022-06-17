@@ -22,6 +22,13 @@ class UserCreate(BaseModel):
         orm_mode = True
 
 
+class UserCreateCall(UserCreate):
+    verification_code: str
+
+    class Config:
+        orm_mode = True
+
+
 class UserCreateOauth(BaseModel):
     email: str | None = None
     name: str | None = None

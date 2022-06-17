@@ -1,9 +1,9 @@
 import requests
 from app.core.config import settings
 
-auth_url = "https://pbx-guru-2.web.pbxmaker.ru/index.php/restapi/auth"
-call_url = "https://pbx-guru-2.web.pbxmaker.ru/index.php/restapi/number/call-auth"
-approve_url = "https://pbx-guru-2.web.pbxmaker.ru/index.php/restapi/number/approve"
+auth_url = settings.PHONE_AUTH_URL
+call_url = settings.PHONE_CALL_URL
+approve_url = settings.PHONE_APPROVE_URL
 
 
 def auth():
