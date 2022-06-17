@@ -6,16 +6,15 @@ from app.schemas import user as user_schema
 from app.utils import security
 
 
-def check_user_with_phone(db: Session, phone: str):
+def check_user_by_phone(db: Session, phone: str):
     db_user = db.query(User).filter(User.phone == phone).first()
-    if db_user:
+    if not db_user:
         return False
     return True
 
 
-def create_user_phone(db: Session, user: user_schema.UserCreate):
-    instance = db.query(User).filter(User.phone == user.phone).first()
-    if instance:
+def create_user(db: Session, user: user_schema.UserCreate):
+    if check_user_by_phone(db=db, phone=user.phone):
         return False
     db_user = User(uuid=uuid.uuid4(),
                    phone=user.phone,

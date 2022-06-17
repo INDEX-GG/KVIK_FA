@@ -4,25 +4,32 @@ from fastapi import APIRouter, Depends, Path, HTTPException
 from app.api.dependencies import get_db
 from app.schemas import response as response_schema
 from app.crud import call as call_crud, user as user_crud
-from app.utils import phone_call
+from app.utils import phone_call, security
 
 
 router = APIRouter(prefix="/phone", tags=["Phone"])
 
 
-@router.get("/call/registration/{phone}", response_model=response_schema.ResponseSuccess,
+@router.get("/check_registration/{phone}", response_model=response_schema.ResponseCheckPhoneRegistration,
+            tags=[], summary="Check Phone Registration")
+async def check_registration(phone: constr(regex=r"^(\+)[7][0-9]{10}$") = Path(),
+                             db: Session = Depends(get_db)):
+    check_phone_exist = user_crud.check_user_by_phone(db=db, phone=phone)
+    if check_phone_exist:
+        return {"phoneRegistration": True}
+    return {"phoneRegistration": False}
+
+
+@router.get("/call/{phone}", response_model=response_schema.ResponseSuccess,
             tags=[], summary="Call to phone",
             responses={409: response_schema.custom_errors(
-                "Conflict", ["User with this email already exist"]),
+                "Conflict", ["User with this phone already exist"]),
                 400: response_schema.custom_errors(
                     "Bad Request", ["usage limit exceeded",
                                     "hardware or services problems"]
                 )})
-async def registration_call(phone: constr(regex=r"^(\+)[7][0-9]{10}$") = Path(),
-                            db: Session = Depends(get_db)):
-    check_exist_user_with_phone = user_crud.check_user_with_phone(phone=phone, db=db)
-    if not check_exist_user_with_phone:
-        raise HTTPException(status_code=409, detail="user with this phone already exist")
+async def call_phone(phone: constr(regex=r"^(\+)[7][0-9]{10}$") = Path(),
+                     db: Session = Depends(get_db)):
     check_count_of_calls = call_crud.check_count_of_calls(phone=phone, max_count_of_calls_in_period=3,
                                                           time_period_in_minutes=30, db=db)
     if not check_count_of_calls:
@@ -32,3 +39,21 @@ async def registration_call(phone: constr(regex=r"^(\+)[7][0-9]{10}$") = Path(),
         raise HTTPException(status_code=400, detail="hardware or services problems")
     call_crud.create_call(phone=phone, verification_code=code, db=db)
     return {"message": "success"}
+
+
+@router.get("/check_verification_code/{phone}/{code}", response_model=response_schema.ResponseCheckVerifCode,
+            tags=[], summary="Check Verification Code",
+            responses={400: response_schema.custom_errors("Bad Request", ["number of attempts exceeded",
+                                                                          "wrong verification code"]
+                                                          )})
+async def check_verification_code(phone: constr(regex=r"^(\+)[7][0-9]{10}$") = Path(),
+                                  code: str = Path(),
+                                  db: Session = Depends(get_db)):
+    check_unsuccessful_try = call_crud.check_count_of_unsuccessful_try_verif_code(db=db, phone=phone)
+    if not check_unsuccessful_try:
+        raise HTTPException(status_code=400, detail="number of attempts exceeded")
+    check_verif_code = call_crud.check_verification_code(db=db, phone=phone, verification_code=code)
+    if not check_verif_code:
+        raise HTTPException(status_code=400, detail="wrong verification code")
+    phone_token = security.create_phone_token(data={"sub": phone})
+    return {"phone_token": phone_token}

@@ -13,20 +13,26 @@ class UserPhoto(BaseModel):
     url: str
 
 
-class UserCreate(BaseModel):
+class UserCreateResponse(BaseModel):
     name: str
-    phone: str
     password: str
 
     class Config:
         orm_mode = True
 
 
-class UserCreateCall(UserCreate):
-    verification_code: str
+class UserCreateRequest(BaseModel):
+    name: str
+    password: str
 
     class Config:
         orm_mode = True
+
+
+class UserCreate(BaseModel):
+    name: str
+    phone: str
+    password: str
 
 
 class UserCreateOauth(BaseModel):

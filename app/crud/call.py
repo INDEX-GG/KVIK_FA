@@ -24,10 +24,12 @@ def check_count_of_calls(db: Session, phone: str, max_count_of_calls_in_period: 
 def check_verification_code(db: Session, phone: str, verification_code: str, time_period_in_minutes: int = 5):
     time_limit = datetime.datetime.utcnow() - datetime.timedelta(minutes=time_period_in_minutes)
     db_call = db.query(PhoneCalls)\
-        .filter(PhoneCalls.phone == phone, PhoneCalls.createdAt >= time_limit, PhoneCalls.phoneValidate == False)\
+        .filter(PhoneCalls.phone == phone, PhoneCalls.createdAt >= time_limit)\
         .order_by(PhoneCalls.createdAt.desc()).first()
     if not db_call:
         create_unsuccessful_try_record(db=db, phone=phone)
+        return False
+    if db_call.phoneValidate:
         return False
     if verification_code != db_call.validateCode:
         create_unsuccessful_try_record(db=db, phone=phone)
