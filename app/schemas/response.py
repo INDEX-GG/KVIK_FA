@@ -27,3 +27,7 @@ class ResponseCheckPhoneRegistration(BaseModel):
 class ResponseLogin(BaseModel):
     refreshToken: str
     accessToken: str
+
+
+class AccessToken(BaseModel):
+    accessToken: str

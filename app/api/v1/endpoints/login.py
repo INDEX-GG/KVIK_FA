@@ -10,10 +10,11 @@ from app.utils import security
 router = APIRouter(prefix="", tags=["Login"])
 
 
-# @router.get("/refresh", response_model=token_schema.AccessToken, tags=[], summary="Refresh token")
-# async def refresh(refresh_token_data: dict = Depends(security.decode_refresh_token)):
-#     access_token = security.create_access_token(refresh_token_data)
-#     return {"accessToken": access_token, "tokenType": "bearer"}
+@router.get("/refresh", response_model=response_schema.AccessToken, tags=[], summary="Refresh token")
+async def refresh(refresh_token_data: dict = Depends(security.decode_refresh_token)):
+    token_data = {"sub": refresh_token_data.get("sub")}
+    access_token = security.create_access_token(token_data)
+    return {"accessToken": access_token}
 
 
 @router.post("/login", response_model=response_schema.ResponseLogin, tags=[], summary="OAuth2 Login",
