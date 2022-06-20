@@ -71,6 +71,15 @@ def decode_phone_token(access_token: str = Depends(dependencies.oauth2_scheme)):
     return user_phone
 
 
+def decode_access_token(access_token: str = Depends(dependencies.oauth2_scheme)):
+    try:
+        payload = jwt.decode(access_token, settings.ACCESS_TOKEN_SECRET_KEY,
+                             algorithms=[settings.ACCESS_TOKEN_ALGORITHM])
+    except JWTError:
+        raise credentials_exception
+    return payload
+
+
 def decode_refresh_token(refresh_token: str = Depends(dependencies.oauth2_scheme)):
     try:
         payload = jwt.decode(refresh_token, settings.REFRESH_TOKEN_SECRET_KEY,

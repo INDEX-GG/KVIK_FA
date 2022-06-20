@@ -50,15 +50,20 @@ class UserCreateOauth(BaseModel):
         orm_mode = True
 
 
-class UserBase(BaseModel):
+class UserOut(BaseModel):
+    id: int
+    uuid: UUID
     email: str | None = None
+    emailVerified: bool
+    phoneVerified: bool
+    createdAt: datetime.datetime
+    photo: UserPhoto | None = None
+    role: UserRole | None = None
     phone: int | None = None
     name: str | None = None
     surname: str | None = None
     username: str | None = None
-    photo: int | None = None
     rating: int | None = None
-    role: int | None = None
     googleId: str | None = None
     vkId: str | None = None
     appleId: str | None = None
@@ -67,20 +72,6 @@ class UserBase(BaseModel):
     deletedAt: datetime.datetime | None = None
     emailVerifiedAt: datetime.datetime | None = None
     phoneVerifiedAt: datetime.datetime | None = None
-
-    class Config:
-        orm_mode = True
-
-
-class UserOut(UserBase):
-    id: int
-    uuid: UUID
-    email: str | None = None
-    emailVerified: bool
-    phoneVerified: bool
-    createdAt: datetime.datetime
-    photo: UserPhoto | None = None
-    role: UserRole
 
     class Config:
         orm_mode = True

@@ -1,9 +1,20 @@
 from sqlalchemy.orm import Session
+from fastapi import Depends
 import uuid
 import datetime
+from app.api.dependencies import get_db
 from app.db.db_models import User, UserPhoto
 from app.schemas import user as user_schema
 from app.utils import security
+from app.api import dependencies
+
+
+def get_user_by_id(db: Session, user_id: int):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if db_user:
+        return db_user
+    else:
+        return False
 
 
 def get_user_by_phone(db: Session, phone: str):
@@ -92,4 +103,23 @@ def create_user_oauth(db: Session, user: user_schema.UserCreateOauth):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+    return user
+
+
+def get_current_user(db: Session = Depends(get_db), access_token: str = Depends(dependencies.oauth2_scheme)):
+    token_data = security.decode_access_token(access_token)
+    user_id = token_data.get("sub")
+    user: User = get_user_by_id(db=db, user_id=user_id)
+    if user is None:
+        raise security.credentials_exception
+    user_out = get_user_out(db_user=user)
+    return user_out
+
+
+def get_user_out(db_user: User):
+    user_dict = db_user.__dict__
+    user_dict["role"] = db_user.role.__dict__
+    if db_user.photo:
+        user_dict["photo"] = db_user.photo.__dict__
+    user = user_schema.UserOut(**user_dict)
     return user

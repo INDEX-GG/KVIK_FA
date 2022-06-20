@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
 from app.crud import user as users_crud
+from app.db.db_models import User
 from app.schemas import user as user_schema, response as response_schema
 from app.utils import security
 
@@ -19,3 +20,8 @@ async def registration(user_data: user_schema.UserCreateResponse,
     if not new_user:
         raise HTTPException(status_code=409, detail="User with this phone already exist")
     return {"message": "success"}
+
+
+@router.get("/me", response_model=user_schema.UserOut, tags=[], summary="Get Current User")
+async def read_users_me(current_user: dict = Depends(users_crud.get_current_user)):
+    return current_user
