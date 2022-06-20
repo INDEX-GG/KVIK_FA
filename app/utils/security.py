@@ -1,9 +1,13 @@
 from fastapi import HTTPException, status, Depends
 from passlib.context import CryptContext
 from jose import JWTError, jwt
+from google.oauth2 import id_token
+from google.auth.transport import requests
+import hashlib
 import datetime
 from app.core.config import settings
 from app.api import dependencies
+from app.schemas import request as request_schema
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -74,3 +78,30 @@ def decode_refresh_token(refresh_token: str = Depends(dependencies.oauth2_scheme
     except JWTError:
         raise credentials_exception
     return payload
+
+
+def decode_google_token(token: str):
+    try:
+        payload = id_token.verify_oauth2_token(token, requests.Request(), settings.google_Client_ID)
+        token_info = request_schema.GoogleTokenData(**payload)
+        return token_info
+    except Exception:
+        return False
+
+
+def check_vk_data(vk_data: request_schema.RequestVkData):
+    check_string = str(settings.vk_app_id) + str(vk_data.auth_data.uid) + str(settings.vk_Secure_Key)
+    check_string_md5 = hashlib.md5(check_string.encode()).hexdigest()
+    if check_string_md5 != vk_data.auth_data.hash:
+        return False
+    return True
+
+
+def decode_apple_token(token: str):
+    try:
+        payload = jwt.get_unverified_claims(token)
+        token_info = request_schema.AppleTokenData(**payload)
+        return token_info
+    except Exception as e:
+        print(e)
+        return False

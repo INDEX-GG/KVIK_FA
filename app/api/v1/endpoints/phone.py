@@ -14,7 +14,7 @@ router = APIRouter(prefix="/phone", tags=["Phone"])
             tags=[], summary="Check Phone Registration")
 async def check_registration(phone: constr(regex=r"^(\+)[7][0-9]{10}$") = Path(),
                              db: Session = Depends(get_db)):
-    check_phone_exist = user_crud.check_user_by_phone(db=db, phone=phone)
+    check_phone_exist = user_crud.get_user_by_phone(db=db, phone=phone)
     if check_phone_exist:
         return {"phoneRegistration": True}
     return {"phoneRegistration": False}

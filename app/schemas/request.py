@@ -22,3 +22,17 @@ class RequestAppleData(BaseModel):
     email: str | None = None
     firstName: str | None = "Anonim"
     lastName: str | None = None
+
+
+class GoogleTokenData(BaseModel):
+    sub: str
+    email: str | None = None
+    email_verified: bool = False
+    given_name: str | None = None
+    family_name: str | None = None
+    picture: str | None = None
+
+
+class AppleTokenData(BaseModel):
+    sub: str
+    email: str | None = None
