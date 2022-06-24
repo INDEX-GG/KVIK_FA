@@ -10,4 +10,4 @@ api_router.include_router(login.router)
 
 @api_router.get("/ver")
 async def ver():
-    return "00.07"
+    return "00.01"
