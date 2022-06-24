@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  app:
+    image: kvik_fa
+    container_name: kvik_fa
+    restart: always
+    ports:
+      - 5007:8000
+    volumes:
+      - /var/www/kvik_files:/code/files/
