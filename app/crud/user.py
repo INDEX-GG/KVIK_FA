@@ -110,7 +110,7 @@ def get_current_user(db: Session = Depends(get_db), access_token: str = Depends(
     token_data = security.decode_access_token(access_token)
     user_id = token_data.get("sub")
     user: User = get_user_by_id(db=db, user_id=user_id)
-    if user is None:
+    if not User:
         raise security.credentials_exception
     user_out = get_user_out(db_user=user)
     return user_out
