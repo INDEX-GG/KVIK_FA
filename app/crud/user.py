@@ -93,6 +93,7 @@ def create_user_oauth(db: Session, user: user_schema.UserCreateOauth):
                    name=user.name,
                    surname=user.surname,
                    emailVerified=user.emailVerify,
+                   phoneHidden=False,
                    googleId=user.googleId,
                    vkId=user.vkId,
                    appleId=user.appleId,
@@ -103,7 +104,7 @@ def create_user_oauth(db: Session, user: user_schema.UserCreateOauth):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return user
+    return db_user
 
 
 def get_current_user(db: Session = Depends(get_db), access_token: str = Depends(dependencies.oauth2_scheme)):
