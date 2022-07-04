@@ -9,7 +9,7 @@ router = APIRouter(prefix="/categories", tags=["Categories"])
 
 @router.get("/{category_id}/additional_fields",
             response_model=category_schema.CategoryAdditionalFields,
-            tags=[], summary="Get Current User",
+            tags=[], summary="Get Category Additional fields",
             responses={409: response_schema.custom_errors("Conflict", ["Category not exist or not for posting"])})
 async def start(category_id,
                 db: Session = Depends(get_db)):
