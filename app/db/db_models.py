@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, TIMESTAMP, BOOLEAN, ForeignKey, BigInteger, Float
+from sqlalchemy import Column, Integer, String, TIMESTAMP, BOOLEAN, ForeignKey, BigInteger, Float, JSON
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.db.session import Base
@@ -49,7 +49,7 @@ class UserPhoto(Base):
 class Role(Base):
     __tablename__ = "roles"
     __table_args__ = {"schema": "public"}
-    id = Column("id", BigInteger, primary_key=True, index=True, nullable=False)
+    id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=False, nullable=False)
     title = Column("title", String)
 
     owner = relationship("User", back_populates="role")
@@ -80,7 +80,7 @@ class PostPhoto(Base):
     owner = relationship("Post", back_populates="photos")
 
 
-class PhoneCalls(Base):
+class PhoneCall(Base):
     __tablename__ = "phone_calls"
     __table_args__ = {"schema": "public"}
     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
@@ -100,9 +100,33 @@ class PhoneVerifyUnsuccessfulTry(Base):
 
 class Catalog(Base):
     __tablename__ = "catalog"
-    __table_args__ = {"schema": "public"}
+    __table_args__ = {"schema": "categories"}
     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
-    parentId = Column("parent_id", BigInteger, ForeignKey("public.catalog.id"))
+    parentId = Column("parent_id", BigInteger, ForeignKey("categories.catalog.id"))
     title = Column("title", String, nullable=False)
     transAlias = Column("trans_alias", String, nullable=False)
     patch = Column("patch", String)
+
+
+class PostingCategories(Base):
+    __tablename__ = "posting_categories"
+    __table_args__ = {"schema": "categories"}
+    id = Column("id", BigInteger, ForeignKey("categories.catalog.id"), primary_key=True, index=True,
+                autoincrement=False, unique=True, nullable=False)
+    patch = Column("patch", String, nullable=False)
+    title = Column("title", String, nullable=False)
+    dynamicTitle = Column("dynamic_title", String, nullable=False)
+    postingTitle = Column("posting_title", String, nullable=False)
+    transTitle = Column("trans_title", String, nullable=False)
+    additionalFields = Column("additional_fields", JSON, nullable=False)
+
+
+# class PostingCategoriesAdditionalFields(Base):
+#     __tablename__ = "posting_categories_additional_fields"
+#     __table_args__ = {"schema": "categories"}
+#     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=False, unique=True, nullable=False)
+#     patch = Column("patch", String, nullable=False)
+#     title = Column("title", String, nullable=False)
+#     dynamicTitle = None
+#     posting_title = None
+#     trans_title = None
