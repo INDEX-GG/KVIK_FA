@@ -4,7 +4,7 @@ from pydantic import BaseModel
 def custom_errors(description: str, error_list: list):
     errors_dict = {"description": description, "content": {"application/json": {"examples": {}}}}
     for err in error_list:
-        errors_dict["content"]["application/json"]["examples"][err] = {"summary": err, "value": {"detail": err}}
+        errors_dict["content"]["application/json"]["examples"][err["msg"]] = {"summary": err["msg"], "value": err}
     return errors_dict
 
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, TIMESTAMP, BOOLEAN, ForeignKey, BigInteger, Float, JSON
+from sqlalchemy import Column, Integer, String, TIMESTAMP, BOOLEAN, ForeignKey, BigInteger, JSON
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.db.session import Base
@@ -61,10 +61,18 @@ class Post(Base):
     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
     uuid = Column("uuid", UUID(as_uuid=True), primary_key=True, unique=True, nullable=False)
     userId = Column("user_id", BigInteger, ForeignKey("public.users.id"), nullable=False)
+    categoryId = Column("category_id", BigInteger, ForeignKey("categories.posting_categories.id"))
     title = Column("title", String, nullable=False)
     description = Column("description", String, nullable=False)
-    price = Column("price", Float)
+    price = Column("price", Integer)
     trade = Column("trade", BOOLEAN, nullable=False)
+    delivery = Column("delivery", BOOLEAN, nullable=False)
+    saveDeal = Column("save_deal", BOOLEAN, nullable=False)
+    phoneHidden = Column("phone_hidden", BOOLEAN, nullable=False)
+    # status = Column("status")
+    # address = Column("address")
+    createdAt = Column("created_at", TIMESTAMP, nullable=False)
+    updatedAt = Column("updated_at", TIMESTAMP)
 
     photos = relationship("PostPhoto", back_populates="owner")
     user = relationship("User", back_populates="posts")
