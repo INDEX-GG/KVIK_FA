@@ -31,5 +31,18 @@ class PostCreate(BaseModel):
         return value
 
     class Config:
+        schema_extra = {
+            "example": {
+                "categoryId": 1,
+                "description": "Post Description",
+                "price": 5000,
+                "address": "redact letter",
+                "trade": False,
+                "additionalFields":
+                    [
+                        {"alias": "alias_one", "value": "value_one"},
+                        {"alias": "alias_two", "value": "value_two"}
+                    ]
+                }
+        }
         orm_mode = True
-
