@@ -37,7 +37,7 @@ async def call_phone(phone: constr(regex=r"^(\+)[7][0-9]{10}$") = Path(),
     if not code:
         raise HTTPException(status_code=400, detail={"msg": "hardware or services problems"})
     call_crud.create_call(phone=phone, verification_code=code, db=db)
-    return {"message": "success"}
+    return {"msg": "success"}
 
 
 @router.get("/check_verification_code/{phone}/{code}", summary="Check Verification Code",

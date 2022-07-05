@@ -29,7 +29,7 @@ async def reset_password(user_phone: str = Depends(security.decode_phone_token),
     if not user:
         raise HTTPException(status_code=400, detail={"msg": "user with this phone does not exist"})
     crud_user.change_user_password(db=db, user=user, new_password=security.hash_password(new_password))
-    return {"message": "success"}
+    return {"msg": "success"}
 
 
 @router.post("/login", summary="OAuth2 Login",
