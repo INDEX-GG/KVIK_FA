@@ -43,7 +43,7 @@ async def call_phone(phone: constr(regex=r"^(\+)[7][0-9]{10}$") = Path(),
 @router.get("/check_verification_code/{phone}/{code}", summary="Check Verification Code",
             response_model=response_schema.ResponseCheckVerifCode,
             responses={400: custom_errors("Bad Request", [{"msg": "number of attempts exceeded"},
-                                                                          {"msg": "wrong verification code"}])
+                                                          {"msg": "wrong verification code"}])
                        })
 async def check_verification_code(phone: constr(regex=r"^(\+)[7][0-9]{10}$") = Path(),
                                   code: str = Path(),
