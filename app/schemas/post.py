@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List
+import json
 
 
 class PostAdditionalFields(BaseModel):
@@ -17,8 +18,18 @@ class PostCreate(BaseModel):
     delivery: bool | None = False
     saveDeal: bool | None = False
     additionalFields: List[PostAdditionalFields] | None = []
-
     address: str
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate_to_json
+
+    @classmethod
+    def validate_to_json(cls, value):
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return value
 
     class Config:
         orm_mode = True
+

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
 from app.crud import category as category_crud, post as post_crud
@@ -16,9 +16,10 @@ router = APIRouter(prefix="/posts", tags=["Categories"])
                  400: custom_errors("Bad Request", [{"msg": "Not all required fields are filled",
                                                      "blank fields": ["blank_field"]}])
                         })
-async def start(post_data: post_schema.PostCreate,
+async def start(post_data: post_schema.PostCreate = Form(),
                 db: Session = Depends(get_db)):
-    category: category_schema.Category = category_crud.get_category_posting_data_by_id(category_id=post_data.categoryId, db=db)
+    category: category_schema.Category = category_crud.get_category_posting_data_by_id(category_id=post_data.categoryId,
+                                                                                       db=db)
     if not category:
         raise HTTPException(status_code=409, detail={"msg": "Category not exist or not for posting"})
     blank_fields = post_crud.get_blank_required_fields(post_additional_fields=post_data.additionalFields,
@@ -26,7 +27,10 @@ async def start(post_data: post_schema.PostCreate,
     if len(blank_fields) > 0:
         raise HTTPException(status_code=400, detail={"msg": "Not all required fields are filled",
                                                      "blank fields": blank_fields})
+    if not post_crud.check_duplicate_fields(post_additional_fields=post_data.additionalFields):
+        pass
 
-    print(post_data)
+
+    # print(post_data)
 
     return {"msg": "success"}
