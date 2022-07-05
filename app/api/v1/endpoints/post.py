@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
-from app.crud import category as category_crud
-from app.schemas import response as response_schema, post as post_schema
+from app.crud import category as category_crud, post as post_crud
+from app.schemas import response as response_schema, post as post_schema, category as category_schema
 from app.schemas.response import custom_errors
 
 
@@ -18,20 +18,15 @@ router = APIRouter(prefix="/posts", tags=["Categories"])
                         })
 async def start(post_data: post_schema.PostCreate,
                 db: Session = Depends(get_db)):
-    category = category_crud.get_category_posting_data_by_id(category_id=post_data.categoryId, db=db)
+    category: category_schema.Category = category_crud.get_category_posting_data_by_id(category_id=post_data.categoryId, db=db)
     if not category:
         raise HTTPException(status_code=409, detail={"msg": "Category not exist or not for posting"})
-    additional_fields = category.additionalFields
-
-    required_additional_fields_aliases = set(x["alias"] for x in additional_fields if x["requiring"] is True)
-    post_additional_fields = set(x.alias for x in list(post_data.additionalFields) if x.value is not None)
-    blank_fields = list(required_additional_fields_aliases - post_additional_fields)
-    if len(blank_fields) != 0:
+    blank_fields = post_crud.get_blank_required_fields(post_additional_fields=post_data.additionalFields,
+                                                       required_additional_fields=category.additionalFields)
+    if len(blank_fields) > 0:
         raise HTTPException(status_code=400, detail={"msg": "Not all required fields are filled",
                                                      "blank fields": blank_fields})
 
-
-    print()
     print(post_data)
 
-    return {"message": "success"}
+    return {"msg": "success"}

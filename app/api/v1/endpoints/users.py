@@ -21,7 +21,7 @@ async def registration(user_data: user_schema.UserCreateResponse,
     new_user = users_crud.create_user(user=user, db=db)
     if not new_user:
         raise HTTPException(status_code=409, detail={"msg": "User with this phone already exist"})
-    return {"message": "success"}
+    return {"msg": "success"}
 
 
 @router.get("/me", summary="Get Current User",

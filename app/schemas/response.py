@@ -9,7 +9,7 @@ def custom_errors(description: str, error_list: list):
 
 
 class ResponseSuccess(BaseModel):
-    message: str = "success"
+    msg: str = "success"
 
 
 class ResponseCustomError(BaseModel):

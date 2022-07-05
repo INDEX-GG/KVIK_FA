@@ -17,3 +17,12 @@ class CategoryAdditionalField(BaseModel):
 
 
 CategoryAdditionalFields = List[CategoryAdditionalField]
+
+
+class Category(BaseModel):
+    patch: str
+    title: int
+    dynamicTitle: bool
+    postingTitle: str
+    transTitle: str
+    additionalFields: CategoryAdditionalFields
