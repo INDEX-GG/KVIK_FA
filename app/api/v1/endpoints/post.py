@@ -5,6 +5,7 @@ from app.api.dependencies import get_db
 from app.crud import category as category_crud, post as post_crud
 from app.schemas import response as response_schema, post as post_schema, category as category_schema
 from app.schemas.response import custom_errors
+from app.utils import image as image_utils
 
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
@@ -17,7 +18,8 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
                  400: custom_errors("Bad Request", [{"msg": "Not all required fields are filled",
                                                      "blank fields": ["blank_field"]},
                                                     {"msg": "Duplicated additional fields"},
-                                                    {"msg": "Post no have images"}])
+                                                    {"msg": "Post no have images"},
+                                                    {"msg": "Image has not been validated"}])
                         })
 async def start(post_data: post_schema.PostCreate = Form(),
                 images: List[UploadFile] = File(None),
@@ -35,8 +37,11 @@ async def start(post_data: post_schema.PostCreate = Form(),
         raise HTTPException(status_code=400, detail={"msg": "Duplicated additional fields"})
     if not images:
         raise HTTPException(status_code=400, detail={"msg": "Post no have images"})
+    not_verified_images = image_utils.checking_images_for_validity(images)
+    if len(not_verified_images) > 0:
+        raise HTTPException(status_code=400, detail={"msg": "Image has not been validated",
+                                                     "not_verified_images": not_verified_images})
 
     print(post_data)
-    print([file.filename for file in images])
 
     return {"msg": "success"}
