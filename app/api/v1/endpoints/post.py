@@ -1,12 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, Form
+from fastapi import APIRouter, Depends, HTTPException, Form, UploadFile, File
 from sqlalchemy.orm import Session
+from typing import List
 from app.api.dependencies import get_db
 from app.crud import category as category_crud, post as post_crud
 from app.schemas import response as response_schema, post as post_schema, category as category_schema
 from app.schemas.response import custom_errors
 
 
-router = APIRouter(prefix="/posts", tags=["Categories"])
+router = APIRouter(prefix="/posts", tags=["Posts"])
 
 
 @router.post("", summary="Add post",
@@ -14,9 +15,12 @@ router = APIRouter(prefix="/posts", tags=["Categories"])
              responses={
                  409: custom_errors("Conflict", [{"msg": "Category not exist or not for posting"}]),
                  400: custom_errors("Bad Request", [{"msg": "Not all required fields are filled",
-                                                     "blank fields": ["blank_field"]}])
+                                                     "blank fields": ["blank_field"]},
+                                                    {"msg": "Duplicated additional fields"},
+                                                    {"msg": "Post no have images"}])
                         })
 async def start(post_data: post_schema.PostCreate = Form(),
+                images: List[UploadFile] = File(None),
                 db: Session = Depends(get_db)):
     category: category_schema.Category = category_crud.get_category_posting_data_by_id(category_id=post_data.categoryId,
                                                                                        db=db)
@@ -28,9 +32,11 @@ async def start(post_data: post_schema.PostCreate = Form(),
         raise HTTPException(status_code=400, detail={"msg": "Not all required fields are filled",
                                                      "blank fields": blank_fields})
     if not post_crud.check_duplicate_fields(post_additional_fields=post_data.additionalFields):
-        pass
+        raise HTTPException(status_code=400, detail={"msg": "Duplicated additional fields"})
+    if not images:
+        raise HTTPException(status_code=400, detail={"msg": "Post no have images"})
 
-
-    # print(post_data)
+    print(post_data)
+    print([file.filename for file in images])
 
     return {"msg": "success"}

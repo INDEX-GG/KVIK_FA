@@ -6,7 +6,7 @@ from app.schemas import category as category_schema
 from app.schemas.response import custom_errors
 
 
-router = APIRouter(prefix="/categories", tags=["Posts"])
+router = APIRouter(prefix="/categories", tags=["Categories"])
 
 
 @router.get("/{category_id}/additional_fields", summary="Get Category Additional fields",
