@@ -18,7 +18,14 @@ def create_post(db: Session, post: post_schema.PostCreate, user_id_out:int):
         uuid=uuid.uuid4(),
         userId=user_id_out
     )
-
     db.add(db_post)
     db.commit()
     return True
+
+def get_post_out(db: Session, post_id:int):
+    db_post = db.query(Post).filter(Post.id == post_id).first()
+    if db_post:
+        return db_post
+    else: return False
+
+

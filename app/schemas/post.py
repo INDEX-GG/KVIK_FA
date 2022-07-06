@@ -19,6 +19,24 @@ class PostCreateRequest(BaseModel):
     class Config:
         orm_mode = True
 
+class PostEdit(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    price: float | None = None
+    trade: bool | None = None
+    uuid: UUID
+    class Config:
+        orm_mode = True
+
+class PostEditRequest(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    price: float | None = None
+    trade: bool | None = None
+    class Config:
+        orm_mode = True
+
+
 # class Post(Base):
 #     __tablename__ = "posts"
 #     __table_args__ = {"schema": "public"}
