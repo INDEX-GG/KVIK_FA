@@ -36,6 +36,12 @@ class PostEditRequest(BaseModel):
     class Config:
         orm_mode = True
 
+class PostEditRequest(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    price: float | None = None
+    trade: bool | None = None
+
 
 # class Post(Base):
 #     __tablename__ = "posts"
