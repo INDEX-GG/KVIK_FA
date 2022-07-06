@@ -46,7 +46,7 @@ async def edit_post(post_data: post_schema.PostEditRequest,post_id:int,
 
 @router.get("/{post_id}", summary="Viewing a particular post",
             description="")
-async def edit_post(post_id:int,
+async def view_post(post_id:int,
                     db: Session = Depends(get_db), user=Depends(users_crud.get_current_user)):
     post_edited :dict = post_crud.get_post_view(db=db, post_id = post_id)
     post_edited = jsonable_encoder(post_edited)
@@ -54,7 +54,7 @@ async def edit_post(post_id:int,
 
 @router.get("", summary="Viewing all posts",
             description="")
-async def edit_post(db: Session = Depends(get_db), user=Depends(users_crud.get_current_user)):
+async def view_posts(db: Session = Depends(get_db), user=Depends(users_crud.get_current_user)):
     post_edited :dict = post_crud.get_post_view_all(db=db)
     post_edited = jsonable_encoder(post_edited)
     return JSONResponse(content=[post_edited])
