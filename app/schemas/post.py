@@ -5,7 +5,7 @@ import json
 
 class PostAdditionalFields(BaseModel):
     alias: str
-    value: str | int | bool | None = None
+    value: str | int | float | bool | list | None = None
 
 
 class PostCreate(BaseModel):

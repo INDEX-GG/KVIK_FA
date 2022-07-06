@@ -69,8 +69,8 @@ async def login_google(google_data: request_schema.RequestGoogleData,
 @router.post("/login_vk", summary="Sign in with VK",
              response_model=response_schema.ResponseLogin,
              responses={400: custom_errors("Bad Request", [{"msg": "Invalid data"}])})
-async def login_google(vk_data: request_schema.RequestVkData,
-                       db: Session = Depends(get_db)):
+async def login_vk(vk_data: request_schema.RequestVkData,
+                   db: Session = Depends(get_db)):
     if not security.check_vk_data(vk_data):
         raise HTTPException(status_code=400, detail={"msg": "Invalid data"})
     vk_id = str(vk_data.auth_data.uid)
@@ -88,8 +88,8 @@ async def login_google(vk_data: request_schema.RequestVkData,
 @router.post("/login_apple", summary="Sign in with Apple",
              response_model=response_schema.ResponseLogin,
              responses={400: custom_errors("Bad Request", [{"msg": "Invalid data"}])})
-async def login_google(apple_data: request_schema.RequestAppleData,
-                       db: Session = Depends(get_db)):
+async def login_apple(apple_data: request_schema.RequestAppleData,
+                      db: Session = Depends(get_db)):
     token_data = security.decode_apple_token(apple_data.id_token)
     if not token_data:
         raise HTTPException(status_code=400, detail={"msg": "Invalid data"})
