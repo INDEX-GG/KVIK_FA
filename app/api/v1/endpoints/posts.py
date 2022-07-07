@@ -23,6 +23,18 @@ async def create_post(post_data: post_schema.PostCreateRequest,
     new_post = post_crud.create_post(post=post_data, db=db, user_id_out=user_id)
     return {"message": "success"}
 
+@router.post("/mod", summary="Blocking a post by moderator",
+            description="")
+async def block_post_mod(post_id:int,
+                    db: Session = Depends(get_db), user=Depends(users_crud.get_current_user)):
+    user_id = int(user.id)
+    # post_block = post_crud.get_post_out(db=db, post_id=post_id)
+    new_block = post_crud.create_block_mod(db = db, user_id=user_id, post_id=post_id)
+    if new_block:
+        return {"message": "success"}
+    else:
+        return {"message" : "failure"}
+
 
 @router.put("/{post_id}", summary="Editing a post",
             description="")
@@ -59,3 +71,15 @@ async def view_posts(db: Session = Depends(get_db), user=Depends(users_crud.get_
     post_edited = jsonable_encoder(post_edited)
     return JSONResponse(content=[post_edited])
 
+@router.post("", summary="Blocking a particular post for yourself",
+            description="")
+async def block_post_pers(post_id:int,
+                    db: Session = Depends(get_db), user=Depends(users_crud.get_current_user)):
+    user_id = int(user.id)
+    post_block = post_crud.get_post_out(db=db, post_id=post_id)
+    if post_block.userId == user.id:
+        new_block = post_crud.create_block_pers(db = db, user_id=user_id, post_id=post_id)
+        if new_block:
+            return {"message": "success"}
+        else:
+            return {"message" : "failure"}

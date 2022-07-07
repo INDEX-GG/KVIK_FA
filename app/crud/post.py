@@ -3,7 +3,7 @@ from fastapi import Depends
 import uuid
 import datetime
 from app.api.dependencies import get_db
-from app.db.db_models import Post, PostPhoto
+from app.db.db_models import Post, PostPhoto, Block_mod, Block_pers
 from app.schemas import post as post_schema
 from app.utils import security
 from app.api import dependencies
@@ -42,3 +42,22 @@ def get_post_view_all(db: Session):
         return db_post
     else: return False
 
+def create_block_pers(db: Session, user_id:int, post_id: int):
+    db_block = Block_pers(
+        user_id=user_id,
+        post_id=post_id,
+        time_op=datetime.datetime.utcnow()
+    )
+    db.add(db_block)
+    db.commit()
+    return True
+
+def create_block_mod(db: Session, user_id:int, post_id: int):
+    db_block = Block_mod(
+        user_id=user_id,
+        post_id=post_id,
+        time_op=datetime.datetime.utcnow()
+    )
+    db.add(db_block)
+    db.commit()
+    return True
