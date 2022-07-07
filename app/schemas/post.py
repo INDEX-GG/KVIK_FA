@@ -1,11 +1,5 @@
 from pydantic import BaseModel
-from typing import List
 import json
-
-
-class PostAdditionalFields(BaseModel):
-    alias: str
-    value: str | int | bool | None = None
 
 
 class PostCreate(BaseModel):
@@ -17,8 +11,8 @@ class PostCreate(BaseModel):
     phoneHidden: bool | None = False
     delivery: bool | None = False
     saveDeal: bool | None = False
-    additionalFields: List[PostAdditionalFields] | None = []
     address: str
+    additionalFields: list | None = []
 
     @classmethod
     def __get_validators__(cls):
