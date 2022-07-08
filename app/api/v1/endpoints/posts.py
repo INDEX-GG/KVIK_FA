@@ -67,7 +67,8 @@ async def view_post(post_id:int,
 @router.get("", summary="Viewing all posts",
             description="")
 async def view_posts(db: Session = Depends(get_db), user=Depends(users_crud.get_current_user)):
-    post_edited :dict = post_crud.get_post_view_all(db=db)
+    user_id = int(user.id)
+    post_edited :dict = post_crud.get_post_view_all(db=db, user_id = user_id)
     post_edited = jsonable_encoder(post_edited)
     return JSONResponse(content=[post_edited])
 
