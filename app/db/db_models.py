@@ -111,9 +111,12 @@ class Catalog(Base):
     __table_args__ = {"schema": "categories"}
     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
     parentId = Column("parent_id", BigInteger, ForeignKey("categories.catalog.id"))
+    patch = Column("patch", String, nullable=False)
     title = Column("title", String, nullable=False)
-    transAlias = Column("trans_alias", String, nullable=False)
-    patch = Column("patch", String)
+    transTitle = Column("trans_title", String, nullable=False)
+    postingPatch = Column("posting_patch", String, nullable=False)
+    postingTitle = Column("posting_title", String, nullable=False)
+    transPostingTitle = Column("trans_posting_title", String, nullable=False)
 
 
 class PostingCategories(Base):
@@ -123,28 +126,18 @@ class PostingCategories(Base):
                 autoincrement=False, unique=True, nullable=False)
     patch = Column("patch", String, nullable=False)
     title = Column("title", String, nullable=False)
-    dynamicTitle = Column("dynamic_title", String, nullable=False)
-    postingTitle = Column("posting_title", String, nullable=False)
     transTitle = Column("trans_title", String, nullable=False)
+    postingPatch = Column("posting_patch", String, nullable=False)
+    postingTitle = Column("posting_title", String, nullable=False)
+    transPostingTitle = Column("trans_posting_title", String, nullable=False)
+    dynamicTitle = Column("dynamic_title", String, nullable=False)
     additionalFields = Column("additional_fields", JSON, nullable=False)
 
 
-# class PostingCategoriesAdditionalFields(Base):
-#     __tablename__ = "posting_categories_additional_fields"
-#     __table_args__ = {"schema": "categories"}
-#     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=False, unique=True, nullable=False)
-#     patch = Column("patch", String, nullable=False)
-#     title = Column("title", String, nullable=False)
-#     dynamicTitle = None
-#     posting_title = None
-#     trans_title = None
-
-
-class Cars(Base):
+class Car(Base):
     __tablename__ = "cars"
-    __table_args__ = {"schema": "cars"}
+    __table_args__ = {"schema": "vehicles"}
     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
-
     mark = Column("mark", String, nullable=False)
     model = Column("model", String, nullable=False)
     generation = Column("generation", String, nullable=False)

@@ -17,17 +17,14 @@ def get_role_by_id(db: Session, role_id: int):
 
 def create_role(db: Session, role: user_schema.UserRole):
     if get_role_by_id(db=db, role_id=role.id):
-        print("ROLE ALREADY EXIST")
         return False
     db_role = Role(id=role.id,
                    title=role.title)
     db.add(db_role)
     db.commit()
-    print("ROLE CREATED")
     return True
 
 
 def create_roles(db: Session = next(get_db())):
     for role in roles:
-        print(user_schema.UserRole(**role))
         create_role(db=db, role=user_schema.UserRole(**role))
