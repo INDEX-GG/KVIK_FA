@@ -52,7 +52,6 @@ class Role(Base):
     id = Column("id", BigInteger, primary_key=True, index=True, nullable=False)
     title = Column("title", String)
 
-
     owner = relationship("User", back_populates="role")
 
 
@@ -66,16 +65,18 @@ class Post(Base):
     description = Column("description", String, nullable=False)
     price = Column("price", Float)
     trade = Column("trade", BOOLEAN, nullable=False)
+    time_op = Column("time_op", TIMESTAMP, nullable=False)
 
     photos = relationship("PostPhoto", back_populates="owner")
     user = relationship("User", back_populates="posts")
+
 
 class Block_mod(Base):
     __tablename__ = "block_mod"
     __table_args__ = {"schema": "public"}
     block_id = Column("block_id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
-    user_id = Column("user_id", BigInteger, index=True, nullable=False)
-    post_id = Column("post_id", BigInteger, index=True, unique=True, nullable=False)
+    user_id = Column("user_id", BigInteger, ForeignKey("public.users.id"), index=True, nullable=False)
+    post_id = Column("post_id", BigInteger, ForeignKey("public.posts.id"), index=True, unique=True, nullable=False)
     time_op = Column("time_op", TIMESTAMP, nullable=False)
 
 class Block_pers(Base):

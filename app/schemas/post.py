@@ -16,6 +16,7 @@ class PostCreateRequest(BaseModel):
     description: str
     price: float
     trade: bool
+
     class Config:
         orm_mode = True
 
@@ -35,12 +36,6 @@ class PostEditRequest(BaseModel):
     trade: bool | None = None
     class Config:
         orm_mode = True
-
-# class PostEditRequest(BaseModel):
-#     title: str | None = None
-#     description: str | None = None
-#     price: float | None = None
-#     trade: bool | None = None
 
 class PostBlockMod(BaseModel):
     post_id: str

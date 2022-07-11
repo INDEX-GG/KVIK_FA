@@ -15,7 +15,7 @@ async def create_post(post_data: post_schema.PostCreateRequest,
                       user=Depends(users_crud.get_current_user),
                       db: Session = Depends(get_db)):
     user_id = int(user.id)
-    new_post = post_crud.create_post(post=post_data, db=db, user_id_out=user_id)
+    post_crud.create_post(post=post_data, db=db, user_id_out=user_id)
     return {"message": "success"}
 
 @router.post("/mod", summary="Blocking a post by moderator",
