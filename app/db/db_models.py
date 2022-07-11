@@ -138,6 +138,7 @@ class Car(Base):
     __tablename__ = "cars"
     __table_args__ = {"schema": "vehicles"}
     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
+    markId = Column("mark_id", BigInteger, ForeignKey("vehicles.cars_marks.id"), nullable=False)
     mark = Column("mark", String, nullable=False)
     model = Column("model", String, nullable=False)
     generation = Column("generation", String, nullable=False)
@@ -152,3 +153,10 @@ class Car(Base):
     bodyType = Column("body_type", String, nullable=False)
     doors = Column("doors", Integer, nullable=False)
     complectation = Column("complectation", String, nullable=False)
+
+
+class CarMark(Base):
+    __tablename__ = "cars_marks"
+    __table_args__ = {"schema": "vehicles"}
+    id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, unique=True, nullable=False)
+    title = Column("title", String, unique=True, nullable=False)
