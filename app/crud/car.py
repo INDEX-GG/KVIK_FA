@@ -178,13 +178,14 @@ def get_modifications(db: Session, mark, model, year, body_type, door, generatio
 
 def get_complectations(db: Session, mark, model, year, body_type, door, generation,
                        fuel_type, drive_type, transmission, modification):
-    query = db.query(Car.complectation).filter(Car.mark == mark, Car.model == model,
-                                               Car.yearFrom <= year, Car.yearTo >= year, Car.bodyType == body_type,
-                                               Car.doors == door, Car.generation == generation,
-                                               Car.fuelType == fuel_type, Car.driveType == drive_type,
-                                               Car.transmission == transmission, Car.modification == modification)\
+    query = db.query(Car.complectation, Car.power, Car.engineSize)\
+        .filter(Car.mark == mark, Car.model == model, Car.yearFrom <= year, Car.yearTo >= year,
+                Car.bodyType == body_type, Car.doors == door, Car.generation == generation, Car.fuelType == fuel_type,
+                Car.driveType == drive_type, Car.transmission == transmission, Car.modification == modification)\
         .order_by(Car.complectation.asc()).distinct().all()
     if len(query) == 0:
         raise HTTPException(404)
     complectations = [x.complectation for x in query]
-    return {"name": "complectations", "values": complectations}
+    return {"name": "complectations", "values": complectations,
+            "completedFields": [{"name": "power", "value": query[0].power},
+                                {"name": "engine_size", "value": query[0].engineSize}]}
