@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict
 
 
 class Car(BaseModel):
@@ -18,3 +18,4 @@ class Car(BaseModel):
 class Suggestion(BaseModel):
     name: str
     values: List[int] | List[str]
+    completedFields: list[dict] | None = None
