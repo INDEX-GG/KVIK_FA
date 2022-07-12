@@ -5,69 +5,69 @@ from app.schemas import car as car_schema
 
 
 def car_suggestion(db: Session, car: car_schema.Car):
-    if not car.mark and not car.model and not car.year and not car.bodyType \
-            and not car.doors and not car.generation and not car.fuelType and not car.driveType \
+    if not car.brand and not car.model and not car.year_of_issue and not car.bodytype \
+            and not car.doors and not car.generation and not car.fueltype and not car.drivetype \
             and not car.transmission and not car.modification:
         return get_marks(db=db)
 
-    if car.mark and not car.model and not car.year and not car.bodyType \
-            and not car.doors and not car.generation and not car.fuelType and not car.driveType \
+    if car.brand and not car.model and not car.year_of_issue and not car.bodytype \
+            and not car.doors and not car.generation and not car.fueltype and not car.drivetype \
             and not car.transmission and not car.modification:
-        return get_models(db=db, mark=car.mark)
+        return get_models(db=db, mark=car.brand)
 
-    if car.mark and car.model and not car.year and not car.bodyType \
-            and not car.doors and not car.generation and not car.fuelType and not car.driveType \
+    if car.brand and car.model and not car.year_of_issue and not car.bodytype \
+            and not car.doors and not car.generation and not car.fueltype and not car.drivetype \
             and not car.transmission and not car.modification:
-        return get_years(db=db, mark=car.mark, model=car.model)
+        return get_years(db=db, mark=car.brand, model=car.model)
 
-    if car.mark and car.model and car.year and not car.bodyType \
-            and not car.doors and not car.generation and not car.fuelType and not car.driveType \
+    if car.brand and car.model and car.year_of_issue and not car.bodytype \
+            and not car.doors and not car.generation and not car.fueltype and not car.drivetype \
             and not car.transmission and not car.modification:
-        return get_body_types(db=db, mark=car.mark, model=car.model, year=car.year)
+        return get_body_types(db=db, mark=car.brand, model=car.model, year=car.year_of_issue)
 
-    if car.mark and car.model and car.year and car.bodyType \
-            and not car.doors and not car.generation and not car.fuelType and not car.driveType \
+    if car.brand and car.model and car.year_of_issue and car.bodytype \
+            and not car.doors and not car.generation and not car.fueltype and not car.drivetype \
             and not car.transmission and not car.modification:
-        return get_doors(db=db, mark=car.mark, model=car.model, year=car.year, body_type=car.bodyType)
+        return get_doors(db=db, mark=car.brand, model=car.model, year=car.year_of_issue, body_type=car.bodytype)
 
-    if car.mark and car.model and car.year and car.bodyType \
-            and car.doors and not car.generation and not car.fuelType and not car.driveType \
+    if car.brand and car.model and car.year_of_issue and car.bodytype \
+            and car.doors and not car.generation and not car.fueltype and not car.drivetype \
             and not car.transmission and not car.modification:
-        return get_generations(db=db, mark=car.mark, model=car.model, year=car.year, body_type=car.bodyType,
+        return get_generations(db=db, mark=car.brand, model=car.model, year=car.year_of_issue, body_type=car.bodytype,
                                door=car.doors)
 
-    if car.mark and car.model and car.year and car.bodyType \
-            and car.doors and car.generation and not car.fuelType and not car.driveType \
+    if car.brand and car.model and car.year_of_issue and car.bodytype \
+            and car.doors and car.generation and not car.fueltype and not car.drivetype \
             and not car.transmission and not car.modification:
-        return get_fuel_types(db=db, mark=car.mark, model=car.model, year=car.year, body_type=car.bodyType,
+        return get_fuel_types(db=db, mark=car.brand, model=car.model, year=car.year_of_issue, body_type=car.bodytype,
                               door=car.doors, generation=car.generation)
 
-    if car.mark and car.model and car.year and car.bodyType \
-            and car.doors and car.generation and car.fuelType and not car.driveType \
+    if car.brand and car.model and car.year_of_issue and car.bodytype \
+            and car.doors and car.generation and car.fueltype and not car.drivetype \
             and not car.transmission and not car.modification:
-        return get_drive_types(db=db, mark=car.mark, model=car.model, year=car.year, body_type=car.bodyType,
-                               door=car.doors, generation=car.generation, fuel_type=car.fuelType)
+        return get_drive_types(db=db, mark=car.brand, model=car.model, year=car.year_of_issue, body_type=car.bodytype,
+                               door=car.doors, generation=car.generation, fuel_type=car.fueltype)
 
-    if car.mark and car.model and car.year and car.bodyType \
-            and car.doors and car.generation and car.fuelType and car.driveType \
+    if car.brand and car.model and car.year_of_issue and car.bodytype \
+            and car.doors and car.generation and car.fueltype and car.drivetype \
             and not car.transmission and not car.modification:
-        return get_transmissions(db=db, mark=car.mark, model=car.model, year=car.year, body_type=car.bodyType,
-                                 door=car.doors, generation=car.generation, fuel_type=car.fuelType,
-                                 drive_type=car.driveType)
+        return get_transmissions(db=db, mark=car.brand, model=car.model, year=car.year_of_issue, body_type=car.bodytype,
+                                 door=car.doors, generation=car.generation, fuel_type=car.fueltype,
+                                 drive_type=car.drivetype)
 
-    if car.mark and car.model and car.year and car.bodyType \
-            and car.doors and car.generation and car.fuelType and car.driveType \
+    if car.brand and car.model and car.year_of_issue and car.bodytype \
+            and car.doors and car.generation and car.fueltype and car.drivetype \
             and car.transmission and not car.modification:
-        return get_modifications(db=db, mark=car.mark, model=car.model, year=car.year, body_type=car.bodyType,
-                                 door=car.doors, generation=car.generation, fuel_type=car.fuelType,
-                                 drive_type=car.driveType, transmission=car.transmission)
+        return get_modifications(db=db, mark=car.brand, model=car.model, year=car.year_of_issue, body_type=car.bodytype,
+                                 door=car.doors, generation=car.generation, fuel_type=car.fueltype,
+                                 drive_type=car.drivetype, transmission=car.transmission)
 
-    if car.mark and car.model and car.year and car.bodyType \
-            and car.doors and car.generation and car.fuelType and car.driveType \
+    if car.brand and car.model and car.year_of_issue and car.bodytype \
+            and car.doors and car.generation and car.fueltype and car.drivetype \
             and car.transmission and car.modification:
-        return get_complectations(db=db, mark=car.mark, model=car.model, year=car.year, body_type=car.bodyType,
-                                  door=car.doors, generation=car.generation, fuel_type=car.fuelType,
-                                  drive_type=car.driveType, transmission=car.transmission,
+        return get_complectations(db=db, mark=car.brand, model=car.model, year=car.year_of_issue,
+                                  body_type=car.bodytype, door=car.doors, generation=car.generation,
+                                  fuel_type=car.fueltype, drive_type=car.drivetype, transmission=car.transmission,
                                   modification=car.modification)
 
     return False
@@ -76,7 +76,7 @@ def car_suggestion(db: Session, car: car_schema.Car):
 def get_marks(db: Session):
     query = db.query(CarMark.title).order_by(CarMark.title.asc()).all()
     marks = [x.title for x in query]
-    return {"name": "mark", "values": marks}
+    return {"name": "brand", "values": marks}
 
 
 def get_models(db: Session, mark):
