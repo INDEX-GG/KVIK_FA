@@ -12,7 +12,7 @@ class PostCreate(BaseModel):
     delivery: bool | None = False
     saveDeal: bool | None = False
     address: str
-    additionalFields: list | None = []
+    additionalFields: dict | None = {}
 
     @classmethod
     def __get_validators__(cls):

@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, TIMESTAMP, BOOLEAN, ForeignKey, BigInteger, JSON, FLOAT
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.db.session import Base
@@ -71,6 +72,7 @@ class Post(Base):
     phoneHidden = Column("phone_hidden", BOOLEAN, nullable=False)
     # status = Column("status")
     # address = Column("address")
+    additionalFields = Column("additional_fields", JSONB, nullable=False)
     createdAt = Column("created_at", TIMESTAMP, nullable=False)
     updatedAt = Column("updated_at", TIMESTAMP)
 
@@ -130,7 +132,7 @@ class PostingCategories(Base):
     postingPatch = Column("posting_patch", String, nullable=False)
     postingTitle = Column("posting_title", String, nullable=False)
     transPostingTitle = Column("trans_posting_title", String, nullable=False)
-    dynamicTitle = Column("dynamic_title", String, nullable=False)
+    dynamicTitle = Column("dynamic_title", BOOLEAN, nullable=False)
     additionalFields = Column("additional_fields", JSON, nullable=False)
 
 
