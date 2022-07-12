@@ -10,3 +10,8 @@ def checking_images_for_validity(images):
         except Exception:
             not_verified.append({"index": index, "filename": image.filename})
     return not_verified
+
+
+def save_images(images):
+    for image in images:
+        print(image)

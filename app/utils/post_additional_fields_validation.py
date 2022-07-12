@@ -2,6 +2,12 @@ import datetime
 import math
 
 
+def get_post_additional_fields(post_additional_fields, required_additional_fields):
+    additional_fields = {x: post_additional_fields[x] for x in post_additional_fields if x in
+                         set(s["alias"] for s in required_additional_fields)}
+    return additional_fields
+
+
 def get_yearly_quarters():
     yearly_quarters = []
     month = datetime.datetime.utcnow().month
@@ -17,52 +23,44 @@ def get_yearly_quarters():
 
 
 def get_blank_required_fields(post_additional_fields, required_additional_fields):
-    additional_fields = set(x["alias"] for x in list(post_additional_fields) if x["value"] is not None)
+    additional_fields = set(x for x in post_additional_fields if post_additional_fields[x] is not None)
     required_additional_fields_aliases = set(x["alias"] for x in required_additional_fields if x["requiring"] is True)
     blank_fields = list(required_additional_fields_aliases - additional_fields)
     return blank_fields
 
 
-def check_duplicate_fields(post_additional_fields):
-    additional_fields = set(x["alias"] for x in list(post_additional_fields))
-    if len(post_additional_fields) != len(additional_fields):
-        return False
-    return True
-
-
 def validate_additional_fields(post_additional_fields, additional_fields_schema):
     errors = []
     for additional_field in additional_fields_schema:
-        field = (next((x for x in post_additional_fields
-                       if x["alias"] == additional_field["alias"] and x["value"] is not None), None))
-        if field:
+        if additional_field["alias"] in post_additional_fields:
+            field = post_additional_fields[additional_field["alias"]]
             try:
                 match additional_field["type"]["name"]:
                     case "number":
-                        validate_number_field(value=field["value"],
+                        validate_number_field(value=field,
                                               type_properties=additional_field["type"]["properties"])
                     case "text":
-                        validate_text_field(value=field["value"],
+                        validate_text_field(value=field,
                                             type_properties=additional_field["type"]["properties"])
                     case "text_hint":
-                        validate_text_hint_field(value=field["value"],
+                        validate_text_hint_field(value=field,
                                                  type_properties=additional_field["type"]["properties"])
                     case "yearly_quarter_hint":
-                        validate_yearly_quarter_hint_field(value=field["value"])
+                        validate_yearly_quarter_hint_field(value=field)
                     case "checkboxes":
-                        validate_checkboxes_field(value=field["value"],
+                        validate_checkboxes_field(value=field,
                                                   type_properties=additional_field["type"]["properties"])
                     case "dynamic_text_hint":
-                        validate_dynamic_text_hint_field(value=field["value"],
+                        validate_dynamic_text_hint_field(value=field,
                                                          type_properties=additional_field["type"]["properties"],
                                                          dependencies=additional_field["dependencies"])
                     case "colors":
-                        validate_colors_field(value=field["value"],
+                        validate_colors_field(value=field,
                                               type_properties=additional_field["type"]["properties"])
                     case "checkbox":
-                        validate_checkbox_field(value=field["value"])
+                        validate_checkbox_field(value=field)
             except Exception as error:
-                errors.append({"alias": field["alias"], "error": str(error)})
+                errors.append({"alias": additional_field["alias"], "error": str(error)})
     return errors
 
 
