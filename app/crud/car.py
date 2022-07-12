@@ -76,7 +76,7 @@ def car_suggestion(db: Session, car: car_schema.Car):
 def get_marks(db: Session):
     query = db.query(CarMark.title).order_by(CarMark.title.asc()).all()
     marks = [x.title for x in query]
-    return {"name": "brand", "values": marks}
+    return {"name": "mark", "values": marks}
 
 
 def get_models(db: Session, mark):
