@@ -76,7 +76,7 @@ def car_suggestion(db: Session, car: car_schema.Car):
 def get_marks(db: Session):
     query = db.query(CarMark.title).order_by(CarMark.title.asc()).all()
     marks = [x.title for x in query]
-    return {"name": "marks", "values": marks}
+    return {"name": "brand", "values": marks}
 
 
 def get_models(db: Session, mark):
@@ -84,7 +84,7 @@ def get_models(db: Session, mark):
     if len(query) == 0:
         raise HTTPException(404)
     models = [x.model for x in query]
-    return {"name": "models", "values": models}
+    return {"name": "model", "values": models}
 
 
 def get_years(db: Session, mark, model):
@@ -94,7 +94,7 @@ def get_years(db: Session, mark, model):
     years = set()
     for i in query:
         years.update(list(range(i.yearFrom, i.yearTo + 1)))
-    return {"name": "years", "values": years}
+    return {"name": "year_of_issue", "values": years}
 
 
 def get_body_types(db: Session, mark, model, year):
@@ -104,7 +104,7 @@ def get_body_types(db: Session, mark, model, year):
     if len(query) == 0:
         raise HTTPException(404)
     body_types = [x.bodyType for x in query]
-    return {"name": "bodyTypes", "values": body_types}
+    return {"name": "bodytype", "values": body_types}
 
 
 def get_doors(db: Session, mark, model, year, body_type):
@@ -125,7 +125,7 @@ def get_generations(db: Session, mark, model, year, body_type, door):
     if len(query) == 0:
         raise HTTPException(404)
     generations = [x.generation for x in query]
-    return {"name": "generations", "values": generations}
+    return {"name": "generation", "values": generations}
 
 
 def get_fuel_types(db: Session, mark, model, year, body_type, door, generation):
@@ -136,7 +136,7 @@ def get_fuel_types(db: Session, mark, model, year, body_type, door, generation):
     if len(query) == 0:
         raise HTTPException(404)
     fuel_types = [x.fuelType for x in query]
-    return {"name": "fuelTypes", "values": fuel_types}
+    return {"name": "fueltype", "values": fuel_types}
 
 
 def get_drive_types(db: Session, mark, model, year, body_type, door, generation, fuel_type):
@@ -148,7 +148,7 @@ def get_drive_types(db: Session, mark, model, year, body_type, door, generation,
     if len(query) == 0:
         raise HTTPException(404)
     drive_types = [x.driveType for x in query]
-    return {"name": "driveTypes", "values": drive_types}
+    return {"name": "drivetype", "values": drive_types}
 
 
 def get_transmissions(db: Session, mark, model, year, body_type, door, generation, fuel_type, drive_type):
@@ -160,7 +160,7 @@ def get_transmissions(db: Session, mark, model, year, body_type, door, generatio
     if len(query) == 0:
         raise HTTPException(404)
     transmissions = [x.transmission for x in query]
-    return {"name": "transmissions", "values": transmissions}
+    return {"name": "transmission", "values": transmissions}
 
 
 def get_modifications(db: Session, mark, model, year, body_type, door, generation, fuel_type, drive_type, transmission):
@@ -173,7 +173,7 @@ def get_modifications(db: Session, mark, model, year, body_type, door, generatio
     if len(query) == 0:
         raise HTTPException(404)
     modifications = [x.modification for x in query]
-    return {"name": "modifications", "values": modifications}
+    return {"name": "modification", "values": modifications}
 
 
 def get_complectations(db: Session, mark, model, year, body_type, door, generation,
@@ -186,6 +186,6 @@ def get_complectations(db: Session, mark, model, year, body_type, door, generati
     if len(query) == 0:
         raise HTTPException(404)
     complectations = [x.complectation for x in query]
-    return {"name": "complectations", "values": complectations,
+    return {"name": "complectation", "values": complectations,
             "completedFields": [{"name": "power", "value": query[0].power},
-                                {"name": "engine_size", "value": query[0].engineSize}]}
+                                {"name": "enginesize", "value": query[0].engineSize}]}
