@@ -3,14 +3,14 @@ from typing import List
 
 
 class Car(BaseModel):
-    mark: str | None = None
+    brand: str | None = None
     model: str | None = None
-    year: int | None = None
-    bodyType: str | None = None
+    year_of_issue: int | None = None
+    bodytype: str | None = None
     doors: int | None = None
     generation: str | None = None
-    fuelType: str | None = None
-    driveType: str | None = None
+    fueltype: str | None = None
+    drivetype: str | None = None
     transmission: str | None = None
     modification: str | None = None
 
