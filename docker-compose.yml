@@ -7,4 +7,4 @@ services:
     ports:
       - 5007:8000
     volumes:
-      - /var/www/kvik_files:/code/files/
+      - /var/www/kvik_files:/code/files
