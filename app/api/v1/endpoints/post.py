@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Form, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, Form, UploadFile, File, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List
 from app.api.dependencies import get_db
@@ -14,6 +14,7 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 @router.post("", summary="Add post",
              response_model=response_schema.ResponseSuccess,
              responses={
+                 500: custom_errors("Server Error", [{"msg": "Image loading error"}]),
                  409: custom_errors("Conflict", [{"msg": "Category not exist or not for posting"}]),
                  400: custom_errors("Bad Request", [{"msg": "Not all required fields are filled",
                                                      "blank fields": ["blank_field"]},
@@ -28,7 +29,8 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
                                                          {"index": 0, "filename": "image_filename"}
                                                      ]}])
                         })
-async def add_post(post_data: post_schema.PostCreate = Form(),
+async def add_post(background_tasks: BackgroundTasks,
+                   post_data: post_schema.PostCreate = Form(),
                    images: List[UploadFile] = File(None),
                    current_user: user_schema.UserOut = Depends(users_crud.get_current_user),
                    db: Session = Depends(get_db)):
@@ -62,12 +64,18 @@ async def add_post(post_data: post_schema.PostCreate = Form(),
         raise HTTPException(status_code=400, detail={"msg": "Image has not been validated",
                                                      "not_verified_images": not_verified_images})
 
-    # Check Exceptions
-    image_utils.save_images(images)
+    # background_tasks.add_task(image_utils.save_images, images=images)
+
+    # images_save_roads = image_utils.save_images(images=images)
+    # print(images_save_roads)
+
+    # if not images_save_roads:
+    #     raise HTTPException(status_code=500, detail={"msg": "Image loading error"})
 
     # db_post = post_crud.create_post(db=db, post=post_data,
     #                                 post_additional_fields=post_additional_fields,
     #                                 user=current_user)
     # print(db_post.id)
+    # print(images_save_roads)
 
     return {"msg": "success"}
