@@ -18,12 +18,12 @@ def checking_images_for_validity(images):
 
 
 def save_file_in_folder(image, road, resolution):
-    Path(f"./files/{road}").mkdir(parents=True, exist_ok=True)
-    image.save(f"./files/{road}/{resolution}.webp", format="webp")
+    Path(f"files/{road}").mkdir(parents=True, exist_ok=True)
+    image.save(f"files/{road}/{resolution}.webp", format="webp")
 
 
 def add_watermark(image, size, step):
-    watermark = Image.open("./static/watermark.png")
+    watermark = Image.open("static/watermark.png")
     watermark = watermark.resize(size)
     image.paste(watermark, (image.size[0] - size[0] - step, image.size[1] - size[1] - step), watermark)
     pass
