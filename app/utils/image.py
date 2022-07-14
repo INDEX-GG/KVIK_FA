@@ -79,6 +79,7 @@ def save_images(images):
             im = Image.open(image.file).convert("RGB")
             save_image_with_watermark(image=im, road=road)
             save_image_square_thumbnails(image=im, road=road)
-    except Exception:
+    except Exception as e:
+        print(e)
         return False
     return roads
