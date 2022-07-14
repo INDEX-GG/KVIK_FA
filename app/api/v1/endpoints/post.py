@@ -64,7 +64,7 @@ async def add_post(background_tasks: BackgroundTasks,
         raise HTTPException(status_code=400, detail={"msg": "Image has not been validated",
                                                      "not_verified_images": not_verified_images})
 
-    # background_tasks.add_task(image_utils.save_images, images=images)
+    background_tasks.add_task(image_utils.save_images, images=images)
 
     # images_save_roads = image_utils.save_images(images=images)
     # print(images_save_roads)
