@@ -65,7 +65,6 @@ class Post(Base):
     description = Column("description", String, nullable=False)
     price = Column("price", Float)
     trade = Column("trade", BOOLEAN, nullable=False)
-    time_op = Column("time_op", TIMESTAMP, nullable=False)
 
     photos = relationship("PostPhoto", back_populates="owner")
     user = relationship("User", back_populates="posts")
@@ -94,7 +93,6 @@ class PostPhoto(Base):
     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, nullable=False)
     postId = Column("post_id", BigInteger, ForeignKey("public.posts.id"), nullable=False)
     url = Column("url", String)
-
     owner = relationship("Post", back_populates="photos")
 
 
@@ -124,3 +122,4 @@ class Catalog(Base):
     title = Column("title", String, nullable=False)
     transAlias = Column("trans_alias", String, nullable=False)
     patch = Column("patch", String)
+

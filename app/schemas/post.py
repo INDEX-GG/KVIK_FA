@@ -45,6 +45,12 @@ class PostBlockPers(BaseModel):
     post_id: str
     user_id: str
 
+class PostPhotos(BaseModel):
+    id: int
+    name: str | None = None
+    url: str
+
+
 # class Post(Base):
 #     __tablename__ = "posts"
 #     __table_args__ = {"schema": "public"}
