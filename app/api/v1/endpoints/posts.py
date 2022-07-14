@@ -19,6 +19,14 @@ async def create_post(post_data: post_schema.PostCreateRequest,
                       user=Depends(users_crud.get_current_user),
                       db: Session = Depends(get_db)
                       ):
+    """Create a new post from user input.
+
+        Keyword arguments:
+        post_data -- user input inside a Basemodel class
+        user -- user profile (Basemodel class)
+        db -- database connection
+
+    """
     user_id = int(user.id)
     post_crud.create_post(post=post_data, db=db, user_id_out=user_id)
     return {"message": "success"}
@@ -30,6 +38,15 @@ async def create_upload_file(post_id: int,
                              db: Session = Depends(get_db),
                              user=Depends(users_crud.get_current_user)
                              ):
+    """Upload photo and add it to existing post.
+
+       Keyword arguments:
+       post_id -- unique post identifier received from query
+       file -- object received via formdata
+       db -- database connection
+       user -- user profile (Basemodel class)
+
+    """
     post_edited = post_crud.get_post_out(db=db, post_id=post_id)
     if post_edited.userId == user.id:
         try:
@@ -50,6 +67,14 @@ async def block_post_mod(post_id: int,
                          db: Session = Depends(get_db),
                          user=Depends(users_crud.get_current_user)
                          ):
+    """Create a record of a post blocked by a moderator.
+
+      Keyword arguments:
+      post_id -- unique post identifier received from query
+      db -- database connection
+      user -- user profile (Basemodel class)
+
+    """
     user_id = int(user.id)
     new_block = post_crud.create_block_mod(db=db, user_id=user_id, post_id=post_id)
     if new_block:
@@ -65,6 +90,15 @@ async def edit_post(post_id: int,
                     db: Session = Depends(get_db),
                     user=Depends(users_crud.get_current_user)
                     ):
+    """Replace the post attributes with ones received via user input.
+
+       Keyword arguments:
+       post_id -- unique post identifier received from path
+       post_data -- user input inside a Basemodel class
+       db -- database connection
+       user -- user profile (Basemodel class)
+
+    """
     post_edited = post_crud.get_post_out(db=db, post_id=post_id)
     if post_edited.userId == user.id:
         edit = post_crud.update_post(db=db, post_data=post_data, post_id=post_id)
@@ -81,6 +115,13 @@ async def edit_post(post_id: int,
 async def view_post(post_id: int,
                     db: Session = Depends(get_db)
                     ):
+    """Return a post with an id given.
+
+       Keyword arguments:
+       post_id -- unique post identifier received from path
+       db -- database connection
+
+    """
     post_edited: dict = post_crud.get_post_view(db=db, post_id=post_id)
     post_edited = jsonable_encoder(post_edited)
     return JSONResponse(content=[post_edited])
@@ -88,9 +129,18 @@ async def view_post(post_id: int,
 
 @router.get("/{post_id}/{photo_id}", summary="Viewing a photo of a particular post",
             description="")
-async def view_post(post_id: int, photo_id: int,
+async def view_post(post_id: int,
+                    photo_id: int,
                     db: Session = Depends(get_db)
                     ):
+    """Return a photo from a post with an id given.
+
+       Keyword arguments:
+       post_id -- unique post identifier received from path
+       photo_id -- unique image identifier received from path
+       db -- database connection
+
+    """
     file_name: str = post_crud.get_file_out(db=db, post_id=post_id, photo_id=photo_id)
     path_rel = post_crud.get_file_path(file_name=file_name)
     return FileResponse(path=path_rel)
@@ -101,6 +151,13 @@ async def view_post(post_id: int, photo_id: int,
 async def view_posts(db: Session = Depends(get_db),
                      user=Depends(users_crud.get_current_user)
                      ):
+    """Return all posts, except ones blocked either user or moderator.
+
+       Keyword arguments:
+       db -- database connection
+       user -- user profile (Basemodel class)
+
+    """
     user_id = int(user.id)
     post_edited: dict = post_crud.get_post_view_all(db=db, user_id=user_id)
     post_edited = jsonable_encoder(post_edited)
@@ -113,6 +170,14 @@ async def block_post_pers(post_id: int,
                           db: Session = Depends(get_db),
                           user=Depends(users_crud.get_current_user)
                           ):
+    """Create a record of a post blocked by a user logged in.
+
+          Keyword arguments:
+          post_id -- unique post identifier received from query
+          db -- database connection
+          user -- user profile (Basemodel class)
+
+        """
     user_id = int(user.id)
     post_block = post_crud.get_post_out(db=db, post_id=post_id)
     if post_block.userId == user.id:
