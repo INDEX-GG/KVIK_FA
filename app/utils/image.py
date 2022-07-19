@@ -73,7 +73,7 @@ def save_images(images, post_id, db):
     try:
         for image in images:
             image_hash = hashlib.md5(image.file.read()).hexdigest()
-            road = "/".join([str(image_hash[i] + str(image_hash[i + 1])) for i in range(0, 7, 2)])
+            road = "/" + "/".join([str(image_hash[i] + str(image_hash[i + 1])) for i in range(0, 7, 2)])
             road += f"/{uuid.uuid4()}"
             roads.append(road)
             im = Image.open(image.file).convert("RGB")
