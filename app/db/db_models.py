@@ -56,6 +56,15 @@ class Role(Base):
     owner = relationship("User", back_populates="role")
 
 
+class PostsStatus(Base):
+    __tablename__ = "posts_statuses"
+    __table_args__ = {"schema": "public"}
+    id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=False, nullable=False)
+    title = Column("title", String)
+
+    post = relationship("Post", back_populates="status")
+
+
 class Post(Base):
     __tablename__ = "posts"
     __table_args__ = {"schema": "public"}
@@ -70,14 +79,15 @@ class Post(Base):
     delivery = Column("delivery", BOOLEAN, nullable=False)
     saveDeal = Column("save_deal", BOOLEAN, nullable=False)
     phoneHidden = Column("phone_hidden", BOOLEAN, nullable=False)
-    # status = Column("status")
-    # address = Column("address")
+    statusId = Column("status_id", BigInteger, ForeignKey("public.posts_statuses.id"))
+    address = Column("address", JSONB, nullable=False)
     additionalFields = Column("additional_fields", JSONB, nullable=False)
     createdAt = Column("created_at", TIMESTAMP, nullable=False)
     updatedAt = Column("updated_at", TIMESTAMP)
 
     photos = relationship("PostPhoto", back_populates="owner")
     user = relationship("User", back_populates="posts")
+    status = relationship("PostsStatus", back_populates="post")
 
 
 class PostPhoto(Base):

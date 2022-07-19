@@ -123,6 +123,5 @@ def decode_apple_token(token: str):
         payload = jwt.get_unverified_claims(token)
         token_info = request_schema.AppleTokenData(**payload)
         return token_info
-    except Exception as e:
-        print(e)
+    except Exception:
         return False

@@ -98,10 +98,8 @@ def validate_checkboxes_field(value, type_properties):
 
 
 def validate_text_field(value, type_properties):
-    # Add regular expression validation here
     pass
 
 
 def validate_dynamic_text_hint_field(value, type_properties, dependencies):
-    # print(value, type_properties, dependencies)
     pass

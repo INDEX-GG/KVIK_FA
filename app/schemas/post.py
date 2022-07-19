@@ -1,5 +1,8 @@
 from pydantic import BaseModel
 import json
+from uuid import UUID
+import datetime
+from typing import List
 
 
 class PostCreate(BaseModel):
@@ -11,7 +14,8 @@ class PostCreate(BaseModel):
     phoneHidden: bool | None = False
     delivery: bool | None = False
     saveDeal: bool | None = False
-    address: str
+    StatusId: int | None = 1
+    address: dict
     additionalFields: dict | None = {}
 
     @classmethod
@@ -39,4 +43,43 @@ class PostCreate(BaseModel):
                     ]
                 }
         }
+        orm_mode = True
+
+
+class PostStatus(BaseModel):
+    id: int
+    title: str
+
+
+class PostImage(BaseModel):
+    id: int
+    url: str
+
+
+class PostOutUser(BaseModel):
+    id: int
+    name: str | None
+    surname: str | None
+
+
+class PostOut(BaseModel):
+    id: int
+    uuid: UUID
+    categoryId: int
+    title: str
+    description: str
+    price: int
+    trade: bool
+    delivery: bool
+    saveDeal: bool
+    phoneHidden: bool
+    status: PostStatus
+    address: dict
+    additionalFields: dict | None = {}
+    createdAt: datetime.datetime
+    updatedAt: datetime.datetime | None = None
+    photos: List[PostImage]
+    user: PostOutUser
+
+    class Config:
         orm_mode = True

@@ -1,8 +1,7 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import cast, Integer
 import uuid
 import datetime
-from app.db.db_models import Post
+from app.db.db_models import Post, PostsStatus, PostPhoto
 from app.schemas import post as post_schema, user as user_schema
 
 
@@ -17,7 +16,9 @@ def create_post(db: Session, post: post_schema.PostCreate, post_additional_field
         trade=post.trade,
         delivery=post.delivery,
         saveDeal=post.saveDeal,
+        address=post.address,
         phoneHidden=post.phoneHidden,
+        statusId=post.StatusId,
         additionalFields=post_additional_fields,
         createdAt=datetime.datetime.utcnow()
     )
@@ -27,8 +28,40 @@ def create_post(db: Session, post: post_schema.PostCreate, post_additional_field
     return db_post
 
 
+def change_post_status(db: Session, post_id: int, status_id: int):
+    db_post = db.query(Post).filter(Post.id == post_id).first()
+    db_status = db.query(PostsStatus).filter(PostsStatus.id == status_id).first()
+    if not db_post:
+        return False
+    if not db_status:
+        return False
+    db_post.statusId = status_id
+    db.commit()
+
+
+def write_post_images_roads(db: Session, post_id: int, images_roads: list):
+    images_roads_objects = [PostPhoto(url=x, postId=post_id) for x in images_roads]
+    db.bulk_save_objects(images_roads_objects)
+    db.commit()
+    return True
+
+
 def create_dynamic_title(category):
-    # qwe = db.query(Post).filter(cast(Post.additionalFields["mileage"], Integer) > 4).all()
-    # print([qwer.id for qwer in qwe])
-    # print("123")
     return "Dynamic Title"
+
+
+def get_post_by_id(db: Session, post_id: int):
+    db_post = db.query(Post).filter(Post.id == post_id).first()
+    if db_post:
+        return db_post
+    else:
+        return False
+
+
+def get_post_out(db_post: Post):
+    post_dict = db_post.__dict__
+    post_out = post_schema.PostOut(**post_dict,
+                                   status=db_post.status.__dict__,
+                                   user=db_post.user.__dict__,
+                                   photos=[x.__dict__ for x in db_post.photos])
+    return post_out

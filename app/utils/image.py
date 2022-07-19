@@ -1,9 +1,9 @@
 import math
 import hashlib
 from pathlib import Path
-
 from PIL import Image
 import uuid
+from app.crud import post as post_crud
 
 
 def checking_images_for_validity(images):
@@ -68,7 +68,7 @@ def save_image_square_thumbnails(image, road):
     save_file_in_folder(image=im, road=road, resolution="100x100")
 
 
-def save_images(images):
+def save_images(images, post_id, db):
     roads = []
     try:
         for image in images:
@@ -81,4 +81,6 @@ def save_images(images):
             save_image_square_thumbnails(image=im, road=road)
     except Exception:
         return False
-    return roads
+    post_crud.write_post_images_roads(db=db, post_id=post_id, images_roads=roads)
+    post_crud.change_post_status(post_id=post_id, status_id=4, db=db)
+    return True
