@@ -11,7 +11,7 @@ from app.utils import image as image_utils, post_additional_fields_validation as
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
 
-@router.post("", summary="Add post",
+@router.post("", summary="Add Post",
              response_model=response_schema.ResponseSuccess, status_code=201,
              responses={
                  500: custom_errors("Server Error", [{"msg": "Image loading error"}]),
@@ -77,10 +77,8 @@ async def add_post(background_tasks: BackgroundTasks,
     return {"msg": "success"}
 
 
-@router.get("/{post_id}", summary="Get post by id",
-            response_model=post_schema.PostOut,
-            responses={409: custom_errors("Conflict", [{"msg": "User with this phone already exist"}])
-                       })
+@router.get("/{post_id}", summary="Get Post By Id",
+            response_model=post_schema.PostOut)
 async def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
     db_post = post_crud.get_post_by_id(db=db, post_id=post_id)
     if not db_post:
