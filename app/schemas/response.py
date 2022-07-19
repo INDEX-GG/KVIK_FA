@@ -12,6 +12,11 @@ class ResponseSuccess(BaseModel):
     msg: str = "success"
 
 
+class ResponseSuccessWithPostId(BaseModel):
+    msg: str = "success"
+    postId: int
+
+
 class ResponseCustomError(BaseModel):
     detail: str
 
