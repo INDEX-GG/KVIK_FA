@@ -3,11 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.db.session import engine
 from app.db.db_models import Base
 from app.api.v1.aggregator import api_router
-from app.utils.initialization import create_roles
+from app.utils.initialization import create_roles, create_posts_statuses
 from app.core.config import settings
 
 Base.metadata.create_all(bind=engine)
 create_roles()
+create_posts_statuses()
 
 app = FastAPI(
     root_path=settings.ROOT_PATCH,

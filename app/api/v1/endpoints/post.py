@@ -12,7 +12,7 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 
 
 @router.post("", summary="Add post",
-             response_model=response_schema.ResponseSuccess,
+             response_model=response_schema.ResponseSuccess, status_code=201,
              responses={
                  500: custom_errors("Server Error", [{"msg": "Image loading error"}]),
                  409: custom_errors("Conflict", [{"msg": "Category not exist or not for posting"}]),
@@ -39,10 +39,15 @@ async def add_post(background_tasks: BackgroundTasks,
                                                                                        db=db)
     if not category:
         raise HTTPException(status_code=409, detail={"msg": "Category not exist or not for posting"})
-    if category.dynamicTitle is False and post_data.title is None:
-        raise HTTPException(status_code=400, detail={"msg": "Category require post title"})
-    if category.dynamicTitle is True:
-        post_data.title = post_crud.create_dynamic_title(category=category)
+
+    if post_data.title is None:
+        raise HTTPException(status_code=400, detail={"msg": "require title"})
+
+    # if category.dynamicTitle is False and post_data.title is None:
+    #     raise HTTPException(status_code=400, detail={"msg": "Category require post title"})
+    # if category.dynamicTitle is True:
+    #     post_data.title = post_crud.create_dynamic_title(category=category)
+
     post_additional_fields = add_fields_valid.get_post_additional_fields(
         post_additional_fields=post_data.additionalFields,
         required_additional_fields=category.additionalFields)
@@ -64,18 +69,21 @@ async def add_post(background_tasks: BackgroundTasks,
         raise HTTPException(status_code=400, detail={"msg": "Image has not been validated",
                                                      "not_verified_images": not_verified_images})
 
-    # background_tasks.add_task(image_utils.save_images, images=images)
+    db_post = post_crud.create_post(db=db, post=post_data,
+                                    post_additional_fields=post_additional_fields,
+                                    user=current_user)
 
-    images_save_roads = image_utils.save_images(images=images)
-    print(images_save_roads)
-
-    # if not images_save_roads:
-    #     raise HTTPException(status_code=500, detail={"msg": "Image loading error"})
-
-    # db_post = post_crud.create_post(db=db, post=post_data,
-    #                                 post_additional_fields=post_additional_fields,
-    #                                 user=current_user)
-    # print(db_post.id)
-    # print(images_save_roads)
-
+    background_tasks.add_task(image_utils.save_images, images=images, post_id=db_post.id, db=db)
     return {"msg": "success"}
+
+
+@router.get("/{post_id}", summary="Get post by id",
+            response_model=post_schema.PostOut,
+            responses={409: custom_errors("Conflict", [{"msg": "User with this phone already exist"}])
+                       })
+async def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
+    db_post = post_crud.get_post_by_id(db=db, post_id=post_id)
+    if not db_post:
+        raise HTTPException(404)
+    post_out = post_crud.get_post_out(db_post)
+    return post_out
