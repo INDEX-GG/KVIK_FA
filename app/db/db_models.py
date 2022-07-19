@@ -94,8 +94,9 @@ class PostPhoto(Base):
     __tablename__ = "posts_photos"
     __table_args__ = {"schema": "public"}
     id = Column("id", BigInteger, primary_key=True, index=True, autoincrement=True, nullable=False)
+    uuid = Column("uuid", UUID(as_uuid=True), primary_key=True, unique=True, nullable=False)
     postId = Column("post_id", BigInteger, ForeignKey("public.posts.id"), nullable=False)
-    url = Column("url", String)
+    road = Column("road", String)
 
     owner = relationship("Post", back_populates="photos")
 

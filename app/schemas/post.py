@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 import json
+from enum import Enum
 from uuid import UUID
 import datetime
 from typing import List
@@ -52,8 +53,15 @@ class PostStatus(BaseModel):
 
 
 class PostImage(BaseModel):
-    id: int
-    url: str
+    uuid: UUID
+
+
+class PostImageResolutions(str, Enum):
+    small_square = "100x100"
+    medium_square = "200x200"
+    large_square = "300x300"
+    medium = "640x480"
+    large = "1280x960"
 
 
 class PostOutUser(BaseModel):

@@ -40,7 +40,7 @@ def change_post_status(db: Session, post_id: int, status_id: int):
 
 
 def write_post_images_roads(db: Session, post_id: int, images_roads: list):
-    images_roads_objects = [PostPhoto(url=x, postId=post_id) for x in images_roads]
+    images_roads_objects = [PostPhoto(road=x, postId=post_id, uuid=uuid.uuid4()) for x in images_roads]
     db.bulk_save_objects(images_roads_objects)
     db.commit()
     return True
