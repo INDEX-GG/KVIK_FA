@@ -12,7 +12,7 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 
 
 @router.post("", summary="Add Post",
-             response_model=response_schema.ResponseSuccess, status_code=201,
+             response_model=response_schema.ResponseSuccessWithPostId, status_code=201,
              responses={
                  500: custom_errors("Server Error", [{"msg": "Image loading error"}]),
                  409: custom_errors("Conflict", [{"msg": "Category not exist or not for posting"}]),
@@ -74,7 +74,7 @@ async def add_post(background_tasks: BackgroundTasks,
                                     user=current_user)
 
     background_tasks.add_task(image_utils.save_images, images=images, post_id=db_post.id, db=db)
-    return {"msg": "success"}
+    return {"msg": "success", "postId": db_post.id}
 
 
 @router.get("/{post_id}", summary="Get Post By Id",
