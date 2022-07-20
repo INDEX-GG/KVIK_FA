@@ -38,10 +38,8 @@ class PostCreate(BaseModel):
                 "address": "redact letter",
                 "trade": False,
                 "additionalFields":
-                    [
-                        {"alias": "alias_one", "value": "value_one"},
-                        {"alias": "alias_two", "value": "value_two"}
-                    ]
+                    {"alias_one": "value_one",
+                     "alias_two": "alias_two"}
                 }
         }
         orm_mode = True
