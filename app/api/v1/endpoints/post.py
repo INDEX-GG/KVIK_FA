@@ -85,3 +85,11 @@ async def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
         raise HTTPException(404)
     post_out = post_crud.get_post_out(db_post)
     return post_out
+
+
+@router.get("", summary="Get Posts",
+            response_model=List[post_schema.PostOut])
+async def get_post_by_id(db: Session = Depends(get_db)):
+    db_posts = post_crud.get_posts(db=db)
+    posts_out = post_crud.get_posts_out(db_posts)
+    return posts_out
