@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 import uuid
 import datetime
+from typing import List
 from app.db.db_models import Post, PostsStatus, PostPhoto
 from app.schemas import post as post_schema, user as user_schema
 
@@ -51,7 +52,7 @@ def create_dynamic_title(category):
 
 
 def get_post_by_id(db: Session, post_id: int):
-    db_post = db.query(Post).filter(Post.id == post_id).first()
+    db_post = db.query(Post).options(joinedload("photos")).options(joinedload("user")).options(joinedload("status")).filter(Post.id == post_id).first()
     if db_post:
         return db_post
     else:
@@ -60,8 +61,24 @@ def get_post_by_id(db: Session, post_id: int):
 
 def get_post_out(db_post: Post):
     post_dict = db_post.__dict__
-    post_out = post_schema.PostOut(**post_dict,
-                                   status=db_post.status.__dict__,
-                                   user=db_post.user.__dict__,
-                                   photos=[x.__dict__ for x in db_post.photos])
+    post_dict["status"] = db_post.status.__dict__
+    post_dict["user"] = db_post.user.__dict__
+    post_dict["photos"] = [x.__dict__ for x in db_post.photos]
+    post_out = post_schema.PostOut(**post_dict)
     return post_out
+
+
+def get_posts_out(db_posts: List[Post]):
+    posts_out = []
+    for db_post in db_posts:
+        posts_out.append(get_post_out(db_post))
+    return posts_out
+
+
+def get_posts(db: Session):
+    db_posts = db.query(Post)\
+        .options(joinedload("photos"))\
+        .options(joinedload("user"))\
+        .options(joinedload("status"))\
+        .order_by(Post.id.desc()).limit(30).all()
+    return db_posts
