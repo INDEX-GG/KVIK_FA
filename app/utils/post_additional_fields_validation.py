@@ -29,6 +29,14 @@ def get_blank_required_fields(post_additional_fields, required_additional_fields
     return blank_fields
 
 
+def get_not_for_edit_fields(post_additional_fields, required_additional_fields):
+    additional_fields = set(x for x in post_additional_fields if post_additional_fields[x] is not None)
+    ability_to_edit_fields_aliases = set(x["alias"] for x in required_additional_fields
+                                         if x["type"]["ability_to_edit"] is True)
+    not_for_edit_fields = list(additional_fields - ability_to_edit_fields_aliases)
+    return not_for_edit_fields
+
+
 def validate_additional_fields(post_additional_fields, additional_fields_schema):
     errors = []
     for additional_field in additional_fields_schema:
@@ -98,8 +106,10 @@ def validate_checkboxes_field(value, type_properties):
 
 
 def validate_text_field(value, type_properties):
+    # "Value not valid regexp"
     pass
 
 
 def validate_dynamic_text_hint_field(value, type_properties, dependencies):
+    # "Value not in valid values array"
     pass

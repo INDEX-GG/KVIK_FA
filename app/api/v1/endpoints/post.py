@@ -87,6 +87,70 @@ async def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
     return post_out
 
 
+@router.put("/{post_id}", summary="Edit Post By Id",
+            # response_model=response_schema.ResponseSuccessWithPostId, status_code=200,
+            responses={
+                500: custom_errors("Server Error", [{"msg": "Image loading error"}]),
+                400: custom_errors("Bad Request", [{"msg": "Duplicated additional fields"},
+                                                   {"msg": "Additional fields not for edit",
+                                                    "not_for_edit_fields": ["not_for_edit_field"]},
+                                                   {"msg": "Additional field validation error",
+                                                    "errors": [{"alias": "alias_one",
+                                                                "error": "error_one"}]},
+                                                   {"msg": "Image has not been validated",
+                                                    "not_verified_images": [
+                                                        {"index": 0, "filename": "image_filename"}
+                                                    ]}])
+                        })
+async def edit_post(background_tasks: BackgroundTasks,
+                    post_id: int,
+                    post_data: post_schema.PostEdit = Form(),
+                    images: List[UploadFile | int] = File([]),
+                    current_user: user_schema.UserOut = Depends(users_crud.get_current_user),
+                    db: Session = Depends(get_db)):
+
+    db_post = post_crud.get_post_by_id(db=db, post_id=post_id)
+    if not db_post:
+        raise HTTPException(404)
+    category: category_schema.Category = category_crud.get_category_posting_data_by_id(category_id=db_post.categoryId,
+                                                                                       db=db)
+    if not category:
+        raise HTTPException(status_code=409, detail={"msg": "Category not exist or not for posting"})
+
+    post_additional_fields = add_fields_valid.get_post_additional_fields(
+        post_additional_fields=post_data.additionalFields,
+        required_additional_fields=category.additionalFields)
+
+    not_for_edit_fields = add_fields_valid.get_not_for_edit_fields(post_additional_fields=post_additional_fields,
+                                                                   required_additional_fields=category.additionalFields)
+    if len(not_for_edit_fields) > 0:
+        raise HTTPException(status_code=400, detail={"msg": "Additional fields not for edit",
+                                                     "not_for_edit_fields": not_for_edit_fields})
+    add_fields_valid_err = \
+        add_fields_valid.validate_additional_fields(post_additional_fields=post_additional_fields,
+                                                    additional_fields_schema=category.additionalFields)
+    if len(add_fields_valid_err) > 0:
+        raise HTTPException(status_code=400, detail={"msg": "Additional field validation error",
+                                                     "errors": add_fields_valid_err})
+
+    not_verified_images = image_utils.checking_images_for_validity(
+        [image for image in images if not isinstance(image, int)]
+    )
+    if len(not_verified_images) > 0:
+        raise HTTPException(status_code=400, detail={"msg": "Image has not been validated",
+                                                     "not_verified_images": not_verified_images})
+
+    edited_additional_fields = post_crud.get_edited_additional_fields(edited_fields=post_data.additionalFields,
+                                                                      post=db_post)
+
+    post_crud.edit_post(db=db, db_post=db_post, edited_additional_fields=edited_additional_fields, post_data=post_data)
+
+    # background_tasks.add_task(image_utils.save_images, images=images, post_id=db_post.id, db=db)
+    # return {"msg": "success", "postId": db_post.id}
+
+    return 123123
+
+
 @router.get("", summary="Get Posts",
             response_model=List[post_schema.PostOut])
 async def get_post_by_id(db: Session = Depends(get_db)):
