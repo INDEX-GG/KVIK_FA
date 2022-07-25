@@ -19,7 +19,7 @@ def create_post(db: Session, post: post_schema.PostCreate, post_additional_field
         saveDeal=post.saveDeal,
         address=post.address,
         phoneHidden=post.phoneHidden,
-        statusId=post.StatusId,
+        statusId=post.statusId,
         additionalFields=post_additional_fields,
         createdAt=datetime.datetime.utcnow()
     )
@@ -82,3 +82,39 @@ def get_posts(db: Session):
         .options(joinedload("status"))\
         .order_by(Post.id.desc()).limit(30).all()
     return db_posts
+
+
+def edit_post(db: Session, db_post: Post, edited_additional_fields: dict, post_data: post_schema.PostEdit):
+
+    db_post.additionalFields = edited_additional_fields
+    db_post.statusId = post_data.statusId
+    db_post.updatedAt = datetime.datetime.utcnow()
+
+    if post_data.title is not None:
+        db_post.title = post_data.title
+    if post_data.description is not None:
+        db_post.description = post_data.description
+    if post_data.price is not None:
+        db_post.price = post_data.price
+    if post_data.trade is not None:
+        db_post.trade = post_data.trade
+    if post_data.phoneHidden is not None:
+        db_post.phoneHidden = post_data.phoneHidden
+    if post_data.delivery is not None:
+        db_post.delivery = post_data.delivery
+    if post_data.saveDeal is not None:
+        db_post.saveDeal = post_data.saveDeal
+    if post_data.address is not None:
+        db_post.address = post_data.address
+
+    db.commit()
+
+    return True
+
+
+def get_edited_additional_fields(post, edited_fields):
+    post_fields = post.additionalFields.copy()
+    for field in post_fields:
+        if field in edited_fields:
+            post_fields[field] = edited_fields[field]
+    return post_fields

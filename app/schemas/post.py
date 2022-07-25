@@ -15,7 +15,7 @@ class PostCreate(BaseModel):
     phoneHidden: bool | None = False
     delivery: bool | None = False
     saveDeal: bool | None = False
-    StatusId: int | None = 1
+    statusId: int | None = 1
     address: dict
     additionalFields: dict | None = {}
 
@@ -35,7 +35,44 @@ class PostCreate(BaseModel):
                 "categoryId": 1,
                 "description": "Post Description",
                 "price": 5000,
-                "address": "redact letter",
+                "address": {"key": "value"},
+                "trade": False,
+                "additionalFields":
+                    {"alias_one": "value_one",
+                     "alias_two": "alias_two"}
+                }
+        }
+        orm_mode = True
+
+
+class PostEdit(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    price: int | None = None
+    trade: bool | None = None
+    phoneHidden: bool | None = None
+    delivery: bool | None = None
+    saveDeal: bool | None = None
+    statusId: None = 1
+    address: dict | None = None
+    additionalFields: dict | None = {}
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate_to_json
+
+    @classmethod
+    def validate_to_json(cls, value):
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return value
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "description": "Post Description",
+                "price": 5000,
+                "address": {"key": "value"},
                 "trade": False,
                 "additionalFields":
                     {"alias_one": "value_one",
@@ -51,6 +88,7 @@ class PostStatus(BaseModel):
 
 
 class PostImage(BaseModel):
+    id: int
     uuid: UUID
 
 
