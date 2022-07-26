@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 import math
 import hashlib
 from pathlib import Path
@@ -84,3 +85,48 @@ def save_images(images, post_id, db):
     post_crud.write_post_images_roads(db=db, post_id=post_id, images_roads=roads)
     post_crud.change_post_status(post_id=post_id, status_id=4, db=db)
     return True
+
+
+def update_images(images, db_post, db):
+    roads = []
+    try:
+        for image in images:
+            if isinstance(image, int):
+                road = next(iter([x.road for x in db_post.photos if x.id == image]))
+                roads.append(road)
+            else:
+                image_hash = hashlib.md5(image.file.read()).hexdigest()
+                road = "/" + "/".join([str(image_hash[i] + str(image_hash[i + 1])) for i in range(0, 7, 2)])
+                road += f"/{uuid.uuid4()}"
+                roads.append(road)
+                im = Image.open(image.file).convert("RGB")
+                save_image_with_watermark(image=im, road=road)
+                save_image_square_thumbnails(image=im, road=road)
+    except Exception:
+        return False
+    print(roads)
+
+    # post_crud.delete_post_images_roads(asdasdasd)
+    # post_crud.write_post_images_roads(db=db, post_id=db_post, images_roads=roads)
+    # post_crud.change_post_status(post_id=db_post.id, status_id=4, db=db)
+    return True
+
+
+def validate_updated_images(images, db_post, db):
+
+    not_verified_images = checking_images_for_validity(
+        [image for image in images if not isinstance(image, int)]
+    )
+    if len(not_verified_images) > 0:
+        raise HTTPException(status_code=400, detail={"msg": "Image has not been validated",
+                                                     "not_verified_images": not_verified_images})
+
+    db_post_images_ids = [x.id for x in db_post.photos]
+    updated_images_ids = [x for x in images if isinstance(x, int)]
+    not_verified_images_ids = [x for x in updated_images_ids if x not in db_post_images_ids]
+    if len(not_verified_images_ids) > 0:
+        raise HTTPException(status_code=400, detail={"msg": "Image ids has not been validated",
+                                                     "not_verified_images_ids": not_verified_images_ids})
+
+    if len(updated_images_ids) != len(set(updated_images_ids)):
+        raise HTTPException(status_code=400, detail={"msg": "Image ids duplicate"})
