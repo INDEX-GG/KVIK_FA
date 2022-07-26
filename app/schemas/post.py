@@ -106,6 +106,29 @@ class PostOutUser(BaseModel):
     surname: str | None
 
 
+class PostInDetailOut(BaseModel):
+    id: int
+    uuid: UUID
+    categoryId: int
+    title: str
+    description: str
+    price: int
+    trade: bool
+    delivery: bool
+    saveDeal: bool
+    phoneHidden: bool
+    status: PostStatus
+    address: dict
+    additionalFields: dict | None = {}
+    createdAt: datetime.datetime
+    updatedAt: datetime.datetime | None = None
+    photos: List[PostImage]
+    user: PostOutUser
+
+    class Config:
+        orm_mode = True
+
+
 class PostOut(BaseModel):
     id: int
     uuid: UUID

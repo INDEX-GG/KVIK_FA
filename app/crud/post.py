@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session, joinedload
 import uuid
 import datetime
 from typing import List
-from app.db.db_models import Post, PostsStatus, PostPhoto
+from app.db.db_models import Post, PostsStatus, PostPhoto, PostingCategories
 from app.schemas import post as post_schema, user as user_schema
 
 
@@ -47,12 +47,28 @@ def write_post_images_roads(db: Session, post_id: int, images_roads: list):
     return True
 
 
+def delete_post_images_roads(db: Session, post_id: int):
+    db.query(PostPhoto).where(PostPhoto.postId == post_id).delete()
+    db.commit()
+    return True
+
+
 def create_dynamic_title(category):
     return "Dynamic Title"
 
 
 def get_post_by_id(db: Session, post_id: int):
-    db_post = db.query(Post).options(joinedload("photos")).options(joinedload("user")).options(joinedload("status")).filter(Post.id == post_id).first()
+    db_post = db.query(Post).options(joinedload("photos")).options(joinedload("user")).options(joinedload("status"))\
+        .filter(Post.id == post_id).first()
+    if db_post:
+        return db_post
+    else:
+        return False
+
+
+def get_user_post_by_id(db: Session, post_id: int, user_id: int):
+    db_post = db.query(Post).options(joinedload("photos")).options(joinedload("user")).options(joinedload("status"))\
+        .filter(Post.id == post_id, Post.userId == user_id).first()
     if db_post:
         return db_post
     else:
@@ -65,6 +81,23 @@ def get_post_out(db_post: Post):
     post_dict["user"] = db_post.user.__dict__
     post_dict["photos"] = [x.__dict__ for x in db_post.photos]
     post_out = post_schema.PostOut(**post_dict)
+    return post_out
+
+
+def get_post_in_detail_out(db_post: Post, category_additional_fields):
+    post_dict = db_post.__dict__
+    new_post_additional_fields = {}
+    for field in category_additional_fields:
+        if field["alias"] in db_post.additionalFields:
+            new_post_additional_fields[field["alias"]] = {
+                "title": field["title"],
+                "value": db_post.additionalFields[field["alias"]]
+            }
+    post_dict["additionalFields"] = new_post_additional_fields
+    post_dict["status"] = db_post.status.__dict__
+    post_dict["user"] = db_post.user.__dict__
+    post_dict["photos"] = [x.__dict__ for x in db_post.photos]
+    post_out = post_schema.PostInDetailOut(**post_dict)
     return post_out
 
 

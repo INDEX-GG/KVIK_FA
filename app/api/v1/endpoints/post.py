@@ -77,18 +77,8 @@ async def add_post(background_tasks: BackgroundTasks,
     return {"msg": "success", "postId": db_post.id}
 
 
-@router.get("/{post_id}", summary="Get Post By Id",
-            response_model=post_schema.PostOut)
-async def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
-    db_post = post_crud.get_post_by_id(db=db, post_id=post_id)
-    if not db_post:
-        raise HTTPException(404)
-    post_out = post_crud.get_post_out(db_post)
-    return post_out
-
-
 @router.put("/{post_id}", summary="Edit Post By Id",
-            # response_model=response_schema.ResponseSuccessWithPostId, status_code=200,
+            response_model=response_schema.ResponseSuccess, status_code=200,
             responses={
                 500: custom_errors("Server Error", [{"msg": "Image loading error"}]),
                 400: custom_errors("Bad Request", [{"msg": "Duplicated additional fields"},
@@ -109,7 +99,7 @@ async def edit_post(background_tasks: BackgroundTasks,
                     current_user: user_schema.UserOut = Depends(users_crud.get_current_user),
                     db: Session = Depends(get_db)):
 
-    db_post = post_crud.get_post_by_id(db=db, post_id=post_id)
+    db_post = post_crud.get_user_post_by_id(db=db, post_id=post_id, user_id=current_user.id)
     if not db_post:
         raise HTTPException(404)
     category: category_schema.Category = category_crud.get_category_posting_data_by_id(category_id=db_post.categoryId,
@@ -133,22 +123,29 @@ async def edit_post(background_tasks: BackgroundTasks,
         raise HTTPException(status_code=400, detail={"msg": "Additional field validation error",
                                                      "errors": add_fields_valid_err})
 
-    not_verified_images = image_utils.checking_images_for_validity(
-        [image for image in images if not isinstance(image, int)]
-    )
-    if len(not_verified_images) > 0:
-        raise HTTPException(status_code=400, detail={"msg": "Image has not been validated",
-                                                     "not_verified_images": not_verified_images})
+    image_utils.validate_updated_images(images=images, db_post=db_post, db=db)
 
     edited_additional_fields = post_crud.get_edited_additional_fields(edited_fields=post_data.additionalFields,
                                                                       post=db_post)
-
     post_crud.edit_post(db=db, db_post=db_post, edited_additional_fields=edited_additional_fields, post_data=post_data)
 
-    # background_tasks.add_task(image_utils.save_images, images=images, post_id=db_post.id, db=db)
-    # return {"msg": "success", "postId": db_post.id}
+    background_tasks.add_task(image_utils.update_images, images=images, db_post=db_post, db=db)
+    return {"msg": "success"}
 
-    return 123123
+
+@router.get("/{post_id}", summary="Get Post By Id",
+            response_model=post_schema.PostInDetailOut)
+async def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
+    db_post = post_crud.get_post_by_id(db=db, post_id=post_id)
+    if not db_post:
+        raise HTTPException(404)
+    category: category_schema.Category = category_crud.get_category_posting_data_by_id(category_id=db_post.categoryId,
+                                                                                       db=db)
+    if not category:
+        raise HTTPException(status_code=409, detail={"msg": "Category not exist or not for posting"})
+
+    post_out = post_crud.get_post_in_detail_out(db_post=db_post, category_additional_fields=category.additionalFields)
+    return post_out
 
 
 @router.get("", summary="Get Posts",
