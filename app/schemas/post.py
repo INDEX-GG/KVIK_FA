@@ -106,10 +106,21 @@ class PostOutUser(BaseModel):
     surname: str | None
 
 
+class PostCategory(BaseModel):
+    id: int
+    patch: str
+    title: str
+    transTitle: str
+    postingPatch: str
+    postingTitle: str
+    transPostingTitle: str
+    dynamicTitle: str
+
+
 class PostInDetailOut(BaseModel):
     id: int
     uuid: UUID
-    categoryId: int
+    # categoryId: int
     title: str
     description: str
     price: int
@@ -123,6 +134,7 @@ class PostInDetailOut(BaseModel):
     createdAt: datetime.datetime
     updatedAt: datetime.datetime | None = None
     photos: List[PostImage]
+    category: PostCategory
     user: PostOutUser
 
     class Config:

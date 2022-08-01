@@ -84,10 +84,10 @@ def get_post_out(db_post: Post):
     return post_out
 
 
-def get_post_in_detail_out(db_post: Post, category_additional_fields):
+def get_post_in_detail_out(db_post: Post, category):
     post_dict = db_post.__dict__
     new_post_additional_fields = {}
-    for field in category_additional_fields:
+    for field in category.additionalFields:
         if field["alias"] in db_post.additionalFields:
             new_post_additional_fields[field["alias"]] = {
                 "title": field["title"],
@@ -97,6 +97,7 @@ def get_post_in_detail_out(db_post: Post, category_additional_fields):
     post_dict["status"] = db_post.status.__dict__
     post_dict["user"] = db_post.user.__dict__
     post_dict["photos"] = [x.__dict__ for x in db_post.photos]
+    post_dict["category"] = category.__dict__
     post_out = post_schema.PostInDetailOut(**post_dict)
     return post_out
 

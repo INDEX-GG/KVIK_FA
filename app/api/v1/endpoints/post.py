@@ -143,8 +143,8 @@ async def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
                                                                                        db=db)
     if not category:
         raise HTTPException(status_code=409, detail={"msg": "Category not exist or not for posting"})
-
-    post_out = post_crud.get_post_in_detail_out(db_post=db_post, category_additional_fields=category.additionalFields)
+    print(category.__dict__)
+    post_out = post_crud.get_post_in_detail_out(db_post=db_post, category=category)
     return post_out
 
 
