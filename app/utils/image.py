@@ -104,11 +104,11 @@ def update_images(images, db_post, db):
                 save_image_square_thumbnails(image=im, road=road)
     except Exception:
         return False
-    print(roads)
 
     # post_crud.delete_post_images_roads(asdasdasd)
     # post_crud.write_post_images_roads(db=db, post_id=db_post, images_roads=roads)
     # post_crud.change_post_status(post_id=db_post.id, status_id=4, db=db)
+
     return True
 
 

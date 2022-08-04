@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session, joinedload
 import uuid
 import datetime
 from typing import List
-from app.db.db_models import Post, PostsStatus, PostPhoto, PostingCategories
+from app.db.db_models import Post, PostsStatus, PostPhoto
 from app.schemas import post as post_schema, user as user_schema
 
 

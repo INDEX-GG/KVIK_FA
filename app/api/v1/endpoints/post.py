@@ -17,7 +17,7 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
                  500: custom_errors("Server Error", [{"msg": "Image loading error"}]),
                  409: custom_errors("Conflict", [{"msg": "Category not exist or not for posting"}]),
                  400: custom_errors("Bad Request", [{"msg": "Not all required fields are filled",
-                                                     "blank fields": ["blank_field"]},
+                                                     "blankFields": ["blank_field"]},
                                                     {"msg": "Duplicated additional fields"},
                                                     {"msg": "Category require post title"},
                                                     {"msg": "Additional field validation error",
@@ -55,7 +55,7 @@ async def add_post(background_tasks: BackgroundTasks,
                                                               required_additional_fields=category.additionalFields)
     if len(blank_fields) > 0:
         raise HTTPException(status_code=400, detail={"msg": "Not all required fields are filled",
-                                                     "blank fields": blank_fields})
+                                                     "blankFields": blank_fields})
     add_fields_valid_err = \
         add_fields_valid.validate_additional_fields(post_additional_fields=post_data.additionalFields,
                                                     additional_fields_schema=category.additionalFields)
@@ -143,7 +143,6 @@ async def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
                                                                                        db=db)
     if not category:
         raise HTTPException(status_code=409, detail={"msg": "Category not exist or not for posting"})
-    print(category.__dict__)
     post_out = post_crud.get_post_in_detail_out(db_post=db_post, category=category)
     return post_out
 
