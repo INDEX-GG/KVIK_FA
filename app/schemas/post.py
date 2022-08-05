@@ -13,6 +13,7 @@ class PostCreate(BaseModel):
     price: int
     trade: bool | None = False
     phoneHidden: bool | None = False
+    messageHidden: bool | None = False
     delivery: bool | None = False
     saveDeal: bool | None = False
     statusId: int | None = 1
@@ -128,6 +129,7 @@ class PostInDetailOut(BaseModel):
     delivery: bool
     saveDeal: bool
     phoneHidden: bool
+    messageHidden: bool
     status: PostStatus
     address: dict
     additionalFields: dict | None = {}

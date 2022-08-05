@@ -19,6 +19,7 @@ def create_post(db: Session, post: post_schema.PostCreate, post_additional_field
         saveDeal=post.saveDeal,
         address=post.address,
         phoneHidden=post.phoneHidden,
+        messageHidden=post.messageHidden,
         statusId=post.statusId,
         additionalFields=post_additional_fields,
         createdAt=datetime.datetime.utcnow()
