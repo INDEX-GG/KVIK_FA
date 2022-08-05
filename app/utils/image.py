@@ -105,14 +105,14 @@ def update_images(images, db_post, db):
     except Exception:
         return False
 
-    # post_crud.delete_post_images_roads(asdasdasd)
-    # post_crud.write_post_images_roads(db=db, post_id=db_post, images_roads=roads)
-    # post_crud.change_post_status(post_id=db_post.id, status_id=4, db=db)
+    post_crud.delete_post_images_roads(db=db, post_id=db_post.id)
+    post_crud.write_post_images_roads(db=db, post_id=db_post.id, images_roads=roads)
+    post_crud.change_post_status(post_id=db_post.id, status_id=4, db=db)
 
     return True
 
 
-def validate_updated_images(images, db_post, db):
+def validate_updated_images(images, db_post):
 
     not_verified_images = checking_images_for_validity(
         [image for image in images if not isinstance(image, int)]
