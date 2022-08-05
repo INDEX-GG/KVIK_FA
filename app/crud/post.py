@@ -14,6 +14,7 @@ def create_post(db: Session, post: post_schema.PostCreate, post_additional_field
         title=post.title,
         description=post.description,
         price=post.price,
+        phone=post.phone,
         trade=post.trade,
         delivery=post.delivery,
         saveDeal=post.saveDeal,
@@ -131,6 +132,8 @@ def edit_post(db: Session, db_post: Post, edited_additional_fields: dict, post_d
         db_post.description = post_data.description
     if post_data.price is not None:
         db_post.price = post_data.price
+    if post_data.phone is not None:
+        db_post.phone = post_data.phone
     if post_data.trade is not None:
         db_post.trade = post_data.trade
     if post_data.phoneHidden is not None:

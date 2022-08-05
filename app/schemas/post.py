@@ -11,6 +11,7 @@ class PostCreate(BaseModel):
     title: str | None = None
     description: str
     price: int
+    phone: str
     trade: bool | None = False
     phoneHidden: bool | None = False
     messageHidden: bool | None = False
@@ -50,6 +51,7 @@ class PostEdit(BaseModel):
     title: str | None = None
     description: str | None = None
     price: int | None = None
+    phone: str | None = None
     trade: bool | None = None
     phoneHidden: bool | None = None
     delivery: bool | None = None
@@ -125,6 +127,7 @@ class PostInDetailOut(BaseModel):
     title: str
     description: str
     price: int
+    phone: str
     trade: bool
     delivery: bool
     saveDeal: bool
