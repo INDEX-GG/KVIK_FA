@@ -123,7 +123,7 @@ async def edit_post(background_tasks: BackgroundTasks,
         raise HTTPException(status_code=400, detail={"msg": "Additional field validation error",
                                                      "errors": add_fields_valid_err})
 
-    image_utils.validate_updated_images(images=images, db_post=db_post, db=db)
+    image_utils.validate_updated_images(images=images, db_post=db_post)
 
     edited_additional_fields = post_crud.get_edited_additional_fields(edited_fields=post_data.additionalFields,
                                                                       post=db_post)
