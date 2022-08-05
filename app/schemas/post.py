@@ -114,7 +114,7 @@ class PostCategory(BaseModel):
     postingPatch: str
     postingTitle: str
     transPostingTitle: str
-    dynamicTitle: str
+    dynamicTitle: bool
 
 
 class PostInDetailOut(BaseModel):
