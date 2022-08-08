@@ -90,9 +90,12 @@ def get_post_in_detail_out(db_post: Post, category):
     post_dict = db_post.__dict__
     new_post_additional_fields = {}
     for field in category.additionalFields:
+        print(field)
         if field["alias"] in db_post.additionalFields:
             new_post_additional_fields[field["alias"]] = {
+                "alias": field["alias"],
                 "title": field["title"],
+                "type": field["type"],
                 "value": db_post.additionalFields[field["alias"]]
             }
     post_dict["additionalFields"] = new_post_additional_fields
