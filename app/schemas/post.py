@@ -190,10 +190,17 @@ class PostLiteOut(BaseModel):
         orm_mode = True
 
 
-class PostsFilter(BaseModel):
-    # search_string: str | None = None
+class PostsQuery(BaseModel):
     page: int | None = Field(1, gt=0, le=1000)
     city: str | None = None
     region: str | None = None
     country: str | None = None
     categoryId: int | None = None
+
+
+class PostsPagination(BaseModel):
+    page: int | None = Field(1, gt=0, le=1000)
+
+
+class PostsFilter(BaseModel):
+    additionalFields: dict | None = None

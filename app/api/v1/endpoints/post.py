@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Form, UploadFile, File, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, Form, UploadFile, File, BackgroundTasks, Body
 from sqlalchemy.orm import Session
 from typing import List
 from app.api.dependencies import get_db
@@ -149,8 +149,18 @@ async def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
 
 @router.get("", summary="Get Posts",
             response_model=List[post_schema.PostLiteOut])
-async def get_posts(params: post_schema.PostsFilter = Depends(),
+async def get_posts(params: post_schema.PostsQuery = Depends(),
                     db: Session = Depends(get_db)):
     db_posts = post_crud.get_posts(db=db, params=params)
+    posts_out = post_crud.get_posts_out(db_posts)
+    return posts_out
+
+
+@router.post("/filter", summary="Get Posts With Filters",
+             response_model=List[post_schema.PostLiteOut])
+async def get_posts(params: post_schema.PostsQuery = Depends(),
+                    body: post_schema.PostsFilter = Body(),
+                    db: Session = Depends(get_db)):
+    db_posts = post_crud.get_posts_with_filters(db=db, params=params, body=body)
     posts_out = post_crud.get_posts_out(db_posts)
     return posts_out
