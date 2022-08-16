@@ -114,12 +114,21 @@ def get_posts_out(db_posts: List[Post]):
     return posts_out
 
 
-def get_posts(db: Session):
-    db_posts = db.query(Post)\
+def get_posts(db: Session, params: post_schema.PostsFilter):
+
+    print(params)
+    offset = (params.page - 1) * 30
+
+    query = db.query(Post)\
         .options(joinedload("photos"))\
         .options(joinedload("user"))\
-        .options(joinedload("status"))\
-        .order_by(Post.id.desc()).limit(30).all()
+        .options(joinedload("status"))
+
+    if params.categoryId is not None:
+        query = query.filter(Post.categoryId == params.categoryId)
+
+    query = query.order_by(Post.id.desc()).limit(30)
+    db_posts = query.all()
     return db_posts
 
 

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import json
 from enum import Enum
 from uuid import UUID
@@ -107,6 +107,7 @@ class PostOutUser(BaseModel):
     id: int
     name: str | None
     surname: str | None
+    phone: str | None
 
 
 class PostCategory(BaseModel):
@@ -167,3 +168,30 @@ class PostOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class PostLiteOut(BaseModel):
+    id: int
+    uuid: UUID
+    title: str
+    description: str
+    price: int
+    trade: bool
+    delivery: bool
+    saveDeal: bool
+    phoneHidden: bool
+    status: PostStatus
+    address: dict
+    createdAt: datetime.datetime
+    photos: List[PostImage]
+    user: PostOutUser
+
+    class Config:
+        orm_mode = True
+
+
+class PostsFilter(BaseModel):
+    # search_string: str | None = None
+    page: int | None = Field(1, gt=0, le=1000)
+    city: str | None = None
+    categoryId: int | None = None
