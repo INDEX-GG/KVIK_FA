@@ -25,6 +25,22 @@ async def registration(user_data: user_schema.UserCreateResponse,
     return {"msg": "success"}
 
 
+@router.get("/me", summary="Get Current User",
+            response_model=user_schema.UserOut)
+async def read_users_me(current_user: dict = Depends(users_crud.get_current_user)):
+    return current_user
+
+
+@router.put("/me",
+            response_model=response_schema.ResponseSuccess,
+            tags=[], summary="Change User Me")
+async def read_users_me(new_user_data: user_schema.ChangeUser,
+                        db: Session = Depends(get_db),
+                        current_db_user=Depends(users_crud.get_current_db_user)):
+    users_crud.change_user_data(user=current_db_user, user_data=new_user_data, db=db)
+    return {"message": "success"}
+
+
 @router.get("/{user_id}", summary="Get User By Id",
             response_model=user_schema.UserOut
             )
@@ -48,19 +64,3 @@ async def get_user_by_id(user_id: int, params: post_schema.PostsPagination = Dep
     posts_out = post_crud.get_posts_out(db_posts)
     user_with_posts = user_schema.UserPostsOut(user=user_out, posts=posts_out)
     return user_with_posts
-
-
-@router.get("/me", summary="Get Current User",
-            response_model=user_schema.UserOut)
-async def read_users_me(current_user: dict = Depends(users_crud.get_current_user)):
-    return current_user
-
-
-# @router.put("/me",
-#             response_model=response_schema.ResponseSuccess,
-#             tags=[], summary="Change User Me")
-# async def read_users_me(new_user_data: user_schema.ChangeUser,
-#                         db: Session = Depends(get_db),
-#                         current_db_user=Depends(users_crud.get_current_user)):
-#     users_crud.change_user_data(user=current_db_user, user_data=new_user_data, db=db)
-#     return {"message": "success"}

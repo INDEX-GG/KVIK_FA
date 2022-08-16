@@ -117,6 +117,15 @@ def get_current_user(db: Session = Depends(get_db), access_token: str = Depends(
     return user_out
 
 
+def get_current_db_user(db: Session = Depends(get_db), access_token: str = Depends(dependencies.oauth2_scheme)):
+    token_data = security.decode_access_token(access_token)
+    user_id = token_data.get("sub")
+    user: User = get_user_by_id(db=db, user_id=user_id)
+    if not User:
+        raise security.credentials_exception
+    return user
+
+
 def get_user_out(db_user: User):
     user_dict = db_user.__dict__
     user_dict["role"] = db_user.role.__dict__
@@ -126,9 +135,9 @@ def get_user_out(db_user: User):
     return user
 
 
-# def change_user_data(db: Session, user: User, user_data: user_schema.ChangeUser):
-#     if user_data.email:
-#         user.email = user_data.email
-#     if user_data.phone:
-#         user.phone = user_data.phone
-#     db.commit()
+def change_user_data(db: Session, user: User, user_data: user_schema.ChangeUser):
+    if user_data.email is not None:
+        user.email = user_data.email
+    if user_data.phone is not None:
+        user.phone = user_data.phone
+    db.commit()
