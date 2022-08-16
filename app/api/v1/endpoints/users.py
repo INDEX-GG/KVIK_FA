@@ -25,7 +25,7 @@ async def registration(user_data: user_schema.UserCreateResponse,
     return {"msg": "success"}
 
 
-@router.get("/{user_id}", summary="Get Current User",
+@router.get("/{user_id}", summary="Get User By Id",
             response_model=user_schema.UserOut
             )
 async def get_user_by_id(user_id: int,  db: Session = Depends(get_db)):
@@ -36,7 +36,7 @@ async def get_user_by_id(user_id: int,  db: Session = Depends(get_db)):
     return user_out
 
 
-@router.get("/{user_id}/posts", summary="Get Current User",
+@router.get("/{user_id}/posts", summary="Get User Posts",
             response_model=user_schema.UserPostsOut
             )
 async def get_user_by_id(user_id: int, params: post_schema.PostsPagination = Depends(), db: Session = Depends(get_db)):
