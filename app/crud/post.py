@@ -90,7 +90,6 @@ def get_post_in_detail_out(db_post: Post, category):
     post_dict = db_post.__dict__
     new_post_additional_fields = {}
     for field in category.additionalFields:
-        print(field)
         if field["alias"] in db_post.additionalFields:
             new_post_additional_fields[field["alias"]] = {
                 "alias": field["alias"],
@@ -115,9 +114,9 @@ def get_posts_out(db_posts: List[Post]):
 
 
 def get_posts(db: Session, params: post_schema.PostsFilter):
-
+    page_limit = 30
     print(params)
-    offset = (params.page - 1) * 30
+    offset = (params.page - 1) * page_limit
 
     query = db.query(Post)\
         .options(joinedload("photos"))\
@@ -126,9 +125,11 @@ def get_posts(db: Session, params: post_schema.PostsFilter):
 
     if params.categoryId is not None:
         query = query.filter(Post.categoryId == params.categoryId)
+    if params.city is not None:
+        query = query.filter(Post.address["data"]["city"].astext == "Челябинск")
 
-    query = query.order_by(Post.id.desc()).limit(30)
-    db_posts = query.all()
+    query = query.order_by(Post.id.desc())
+    db_posts = query.offset(offset).limit(page_limit).all()
     return db_posts
 
 
