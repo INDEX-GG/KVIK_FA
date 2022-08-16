@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.api.dependencies import get_db
-from app.crud import user as users_crud
-from app.schemas import user as user_schema, response as response_schema
+from app.db.db_models import User
+from app.crud import user as users_crud, post as post_crud
+from app.schemas import user as user_schema, response as response_schema, post as post_schema
 from app.schemas.response import custom_errors
 from app.utils import security
 
@@ -22,6 +23,31 @@ async def registration(user_data: user_schema.UserCreateResponse,
     if not new_user:
         raise HTTPException(status_code=409, detail={"msg": "User with this phone already exist"})
     return {"msg": "success"}
+
+
+@router.get("/{user_id}", summary="Get Current User",
+            response_model=user_schema.UserOut
+            )
+async def get_user_by_id(user_id: int,  db: Session = Depends(get_db)):
+    db_user: User = users_crud.get_user_by_id(db=db, user_id=user_id)
+    if not db_user:
+        raise HTTPException(404)
+    user_out = users_crud.get_user_out(db_user=db_user)
+    return user_out
+
+
+@router.get("/{user_id}/posts", summary="Get Current User",
+            response_model=user_schema.UserPostsOut
+            )
+async def get_user_by_id(user_id: int, params: post_schema.PostsPagination = Depends(), db: Session = Depends(get_db)):
+    db_user: User = users_crud.get_user_by_id(db=db, user_id=user_id)
+    if not db_user:
+        raise HTTPException(404)
+    user_out = users_crud.get_user_out(db_user=db_user)
+    db_posts = post_crud.get_user_posts(db=db, page=params.page, user_id=user_id)
+    posts_out = post_crud.get_posts_out(db_posts)
+    user_with_posts = user_schema.UserPostsOut(user=user_out, posts=posts_out)
+    return user_with_posts
 
 
 @router.get("/me", summary="Get Current User",

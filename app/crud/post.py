@@ -113,21 +113,47 @@ def get_posts_out(db_posts: List[Post]):
     return posts_out
 
 
-def get_posts(db: Session, params: post_schema.PostsFilter):
+def get_posts(db: Session, params: post_schema.PostsQuery):
     page_limit = 30
-    print(params)
     offset = (params.page - 1) * page_limit
-
     query = db.query(Post)\
         .options(joinedload("photos"))\
         .options(joinedload("user"))\
         .options(joinedload("status"))
-
     if params.categoryId is not None:
         query = query.filter(Post.categoryId == params.categoryId)
     if params.city is not None:
-        query = query.filter(Post.address["data"]["city"].astext == "Челябинск")
+        query = query.filter(Post.address["data"]["city"].astext == params.city)
+    if params.region is not None:
+        query = query.filter(Post.address["data"]["region"].astext == params.region)
+    if params.country is not None:
+        query = query.filter(Post.address["data"]["country"].astext == params.country)
+    query = query.order_by(Post.id.desc())
+    db_posts = query.offset(offset).limit(page_limit).all()
+    return db_posts
 
+
+def get_posts_with_filters(db: Session, params: post_schema.PostsQuery, body: post_schema.PostsFilter):
+
+    # Дописать валидацию доп полей для категории
+
+    page_limit = 30
+    offset = (params.page - 1) * page_limit
+    query = db.query(Post)\
+        .options(joinedload("photos"))\
+        .options(joinedload("user"))\
+        .options(joinedload("status"))
+    if params.categoryId is not None:
+        query = query.filter(Post.categoryId == params.categoryId)
+    if params.city is not None:
+        query = query.filter(Post.address["data"]["city"].astext == params.city)
+    if params.region is not None:
+        query = query.filter(Post.address["data"]["region"].astext == params.region)
+    if params.country is not None:
+        query = query.filter(Post.address["data"]["country"].astext == params.country)
+    if body.additionalFields is not None:
+        for key, value in body.additionalFields.items():
+            query = query.filter(Post.additionalFields[key].astext == str(value))
     query = query.order_by(Post.id.desc())
     db_posts = query.offset(offset).limit(page_limit).all()
     return db_posts
@@ -169,3 +195,17 @@ def get_edited_additional_fields(post, edited_fields):
         if field in edited_fields:
             post_fields[field] = edited_fields[field]
     return post_fields
+
+
+def get_user_posts(db: Session, page: int, user_id: int):
+
+    page_limit = 30
+    offset = (page - 1) * page_limit
+    query = db.query(Post)\
+        .options(joinedload("photos"))\
+        .options(joinedload("user"))\
+        .options(joinedload("status"))
+    query = query.filter(Post.userId == user_id)
+    query = query.order_by(Post.id.desc())
+    db_posts = query.offset(offset).limit(page_limit).all()
+    return db_posts

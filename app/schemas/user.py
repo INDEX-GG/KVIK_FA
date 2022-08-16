@@ -1,5 +1,7 @@
 from pydantic import BaseModel
+from typing import List
 from uuid import UUID
+from app.schemas import post as post_schema
 import datetime
 
 
@@ -72,6 +74,14 @@ class UserOut(BaseModel):
     deletedAt: datetime.datetime | None = None
     emailVerifiedAt: datetime.datetime | None = None
     phoneVerifiedAt: datetime.datetime | None = None
+
+    class Config:
+        orm_mode = True
+
+
+class UserPostsOut(BaseModel):
+    user: UserOut
+    posts: List[post_schema.PostLiteOut]
 
     class Config:
         orm_mode = True
