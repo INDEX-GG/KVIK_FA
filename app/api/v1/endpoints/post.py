@@ -148,8 +148,9 @@ async def get_post_by_id(post_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("", summary="Get Posts",
-            response_model=List[post_schema.PostOut])
-async def get_post_by_id(db: Session = Depends(get_db)):
-    db_posts = post_crud.get_posts(db=db)
+            response_model=List[post_schema.PostLiteOut])
+async def get_posts(params: post_schema.PostsFilter = Depends(),
+                    db: Session = Depends(get_db)):
+    db_posts = post_crud.get_posts(db=db, params=params)
     posts_out = post_crud.get_posts_out(db_posts)
     return posts_out

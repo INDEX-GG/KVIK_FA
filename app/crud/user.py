@@ -124,3 +124,11 @@ def get_user_out(db_user: User):
         user_dict["photo"] = db_user.photo.__dict__
     user = user_schema.UserOut(**user_dict)
     return user
+
+
+# def change_user_data(db: Session, user: User, user_data: user_schema.ChangeUser):
+#     if user_data.email:
+#         user.email = user_data.email
+#     if user_data.phone:
+#         user.phone = user_data.phone
+#     db.commit()
