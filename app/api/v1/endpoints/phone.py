@@ -25,7 +25,7 @@ async def check_registration(phone: constr(regex=r"^(\+)[7][0-9]{10}$") = Path()
             response_model=response_schema.ResponseSuccess,
             responses={409: custom_errors("Conflict", [{"msg": "User with this phone already exist"}]),
                        400: custom_errors("Bad Request", [{"msg": "usage limit exceeded"},
-                                                                          {"msg": "hardware or services problems"}])
+                                                          {"msg": "hardware or services problems"}])
                        })
 async def call_phone(phone: constr(regex=r"^(\+)[7][0-9]{10}$") = Path(),
                      db: Session = Depends(get_db)):
